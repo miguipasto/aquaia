@@ -1,0 +1,32 @@
+{
+  "seed": 42,
+  "device": "cpu",
+  "config": {
+    "LOOKBACK": 90,
+    "HORIZON": 180,
+    "BATCH_SIZE": 64,
+    "LR": 0.0005,
+    "WEIGHT_DECAY": 0.0001,
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.2,
+    "FEATURES": 22,
+    "SIGMA_FORECAST": 0.05,
+    "HIST_COLS": [
+      "nivel",
+      "precipitacion",
+      "temperatura",
+      "caudal_promedio",
+      "tmed",
+      "prec",
+      "tmin",
+      "tmax",
+      "hr_media",
+      "velmedia",
+      "racha"
+    ]
+  },
+  "mae_day_1": 0.06076086685061455,
+  "rmse_day_1": 0.09290947226432365,
+  "best_val_loss": 0.019531666744809002
+}
