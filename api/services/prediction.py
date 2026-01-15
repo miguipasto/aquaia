@@ -58,31 +58,19 @@ class PredictionService:
     def load_model(self):
         """Carga el modelo y los scalers desde disco."""
         if self.model is not None:
-            return  # Ya está cargado
+            return
         
-        print(f"🤖 Cargando modelo desde {settings.model_path}...")
-        
-        # Cargar checkpoint
-        ckpt = torch.load(settings.model_path, map_location='cpu', weights_only=False)
+        ckpt = torch.load(settings.model_path_absolute, map_location='cpu', weights_only=False)
         self.config = ckpt.get('config', {})
         
-        # Extraer configuración
-        self.lookback = self.config.get('LOOKBACK', 90)
-        self.horizon = self.config.get('HORIZON', 180)
-        hidden_size = self.config.get('HIDDEN_SIZE', 128)
-        num_layers = self.config.get('NUM_LAYERS', 2)
-        dropout = self.config.get('DROPOUT', 0.2)
-        self.features = self.config.get('FEATURES', 22)
+        self.lookback = self.config.get('LOOKBACK', settings.model_lookback)
+        self.horizon = self.config.get('HORIZON', settings.model_horizon)
+        hidden_size = self.config.get('HIDDEN_SIZE', settings.model_hidden_size)
+        num_layers = self.config.get('NUM_LAYERS', settings.model_num_layers)
+        dropout = self.config.get('DROPOUT', settings.model_dropout)
+        self.features = self.config.get('FEATURES', settings.model_features)
         self.hist_cols = self.config.get('HIST_COLS', ['nivel', 'precipitacion', 'temperatura', 'caudal_promedio'])
-        self.sigma_forecast = self.config.get('SIGMA_FORECAST', 0.05)
-        
-        # Actualizar settings globales
-        settings.lookback = self.lookback
-        settings.horizon = self.horizon
-        settings.features = self.features
-        
-        print(f"   Config: LOOKBACK={self.lookback}, HORIZON={self.horizon}, FEATURES={self.features}")
-        print(f"   Columnas históricas: {self.hist_cols}")
+        self.sigma_forecast = self.config.get('SIGMA_FORECAST', settings.model_sigma_forecast)
         
         # Crear modelo
         self.model = LSTMSeq2Seq(
@@ -98,10 +86,7 @@ class PredictionService:
         self.model.eval()
         self.model.cpu()
         
-        # Cargar scalers
-        print(f"📏 Cargando scalers desde {settings.scalers_path}...")
-        self.scalers = np.load(settings.scalers_path, allow_pickle=True).item()
-        print(f"✓ Modelo y scalers cargados: {len(self.scalers)} estaciones disponibles")
+        self.scalers = np.load(settings.scalers_path_absolute, allow_pickle=True).item()
     
     def _build_window(
         self,
@@ -196,7 +181,7 @@ class PredictionService:
             horizonte: días a predecir (default: 30)
         
         Returns:
-            DataFrame con columnas: fecha, pred_hist, pred_aemet_ruido, nivel_real
+            DataFrame con columnas: fecha, pred_hist, pred, nivel_real
         
         Raises:
             ValueError: Si el embalse no existe o no tiene scaler
@@ -252,7 +237,7 @@ class PredictionService:
         out = pd.DataFrame({
             'fecha': fechas_pred,
             'pred_hist': preds['hist'],
-            'pred_aemet_ruido': preds['aemet_ruido']
+            'pred': preds['aemet_ruido']
         })
         
         # Hacer merge con datos reales

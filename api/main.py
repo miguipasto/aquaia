@@ -1,9 +1,5 @@
 """
 API REST para predicción de niveles de embalses usando LSTM Seq2Seq.
-
-AquaAI - Sistema Inteligente de Predicción de Embalses
-Autor: Miguel (TFM)
-Versión: 1.0.0
 """
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +29,8 @@ from .models import (
 from .data import data_loader, db_connection
 from .services import prediction_service, risk_service
 from .routers import recomendaciones as recomendaciones_router
+from .middleware import SecurityMiddleware, RateLimitMiddleware, cache_response
+from .middleware.cache import get_cache_stats, clear_cache
 
 # Configurar logging
 logging.basicConfig(
@@ -48,30 +46,27 @@ async def lifespan(app: FastAPI):
     Gestor del ciclo de vida de la aplicación.
     Carga modelo y datos al iniciar, libera recursos al finalizar.
     """
-    logger.info("🚀 Iniciando AquaAI API...")
+    logger.info("Iniciando AquaAI API")
     
-    # Cargar modelo y scalers
     try:
         prediction_service.load_model()
-        logger.info("✓ Modelo y scalers cargados correctamente")
+        logger.info("Modelo y scalers cargados")
     except Exception as e:
-        logger.error(f"❌ Error al cargar modelo: {e}")
+        logger.error(f"Error al cargar modelo: {e}")
         raise
     
-    # Inicializar conexión a base de datos
     try:
         data_loader.initialize()
-        logger.info("✓ Conexión a PostgreSQL establecida")
+        logger.info("Conexión a base de datos establecida")
     except Exception as e:
-        logger.error(f"❌ Error al conectar con la base de datos: {e}")
+        logger.error(f"Error al conectar con la base de datos: {e}")
         raise
     
-    logger.info("✅ AquaAI API lista para recibir peticiones")
+    logger.info("API iniciada correctamente")
     
-    yield  # La aplicación está activa
+    yield
     
-    # Cleanup
-    logger.info("👋 Cerrando AquaAI API...")
+    logger.info("Cerrando API")
     data_loader.close()
 
 
@@ -89,19 +84,18 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=settings.cors_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Incluir routers
+# Añadir middlewares de seguridad y optimización
+app.add_middleware(SecurityMiddleware)
+app.add_middleware(RateLimitMiddleware)
+
 app.include_router(recomendaciones_router.router)
 
-
-# ============================================================================
-# ENDPOINTS DE SALUD Y UTILIDADES
-# ============================================================================
 
 @app.get(
     "/",
@@ -149,9 +143,38 @@ async def health_check():
     }
 
 
-# ============================================================================
-# ENDPOINTS DE VISUALIZACIÓN / DASHBOARD
-# ============================================================================
+@app.get(
+    "/metrics",
+    tags=["Utilidades"],
+    summary="Métricas del sistema",
+    description="Devuelve métricas de rendimiento y uso del sistema"
+)
+async def get_metrics():
+    """Obtiene métricas del sistema."""
+    if not settings.enable_metrics:
+        raise HTTPException(status_code=404, detail="Métricas deshabilitadas")
+    
+    return {
+        "cache": get_cache_stats(),
+        "config": {
+            "cache_enabled": settings.enable_cache,
+            "rate_limit_enabled": settings.enable_rate_limit,
+            "rate_limit": f"{settings.rate_limit_requests} req/{settings.rate_limit_window}s"
+        }
+    }
+
+
+@app.post(
+    "/admin/cache/clear",
+    tags=["Admin"],
+    summary="Limpiar caché",
+    description="Limpia todo el caché de la aplicación (requiere autenticación)"
+)
+async def clear_cache_endpoint():
+    """Limpia el caché."""
+    clear_cache()
+    return {"message": "Caché limpiado exitosamente"}
+
 
 @app.get(
     "/embalses",
@@ -160,6 +183,7 @@ async def health_check():
     summary="Listar embalses disponibles",
     description="Devuelve la lista completa de embalses disponibles en el sistema con sus datos básicos"
 )
+@cache_response(ttl=3600)  # Cachear por 1 hora
 async def listar_embalses():
     """Obtiene la lista de todos los embalses disponibles."""
     try:
@@ -272,7 +296,7 @@ async def generar_prediccion(
             predicciones.append({
                 "fecha": row['fecha'].strftime('%Y-%m-%d'),
                 "pred_hist": float(row['pred_hist']),
-                "pred_aemet_ruido": float(row['pred_aemet_ruido']),
+                "pred": float(row['pred']),
                 "nivel_real": float(row['nivel_real']) if not pd.isna(row['nivel_real']) else None
             })
         
@@ -328,7 +352,7 @@ async def prediccion_ultimo(codigo_saih: str):
             predicciones.append({
                 "fecha": row['fecha'].strftime('%Y-%m-%d'),
                 "pred_hist": float(row['pred_hist']),
-                "pred_aemet_ruido": float(row['pred_aemet_ruido']),
+                "pred": float(row['pred']),
                 "nivel_real": float(row['nivel_real']) if not pd.isna(row['nivel_real']) else None
             })
         
@@ -378,7 +402,7 @@ async def prediccion_lote(request: PrediccionLoteRequest):
                 predicciones.append({
                     "fecha": row['fecha'].strftime('%Y-%m-%d'),
                     "pred_hist": float(row['pred_hist']),
-                    "pred_aemet_ruido": float(row['pred_aemet_ruido']),
+                    "pred": float(row['pred']),
                     "nivel_real": float(row['nivel_real']) if not pd.isna(row['nivel_real']) else None
                 })
             
@@ -485,6 +509,7 @@ async def obtener_recomendacion(codigo_saih: str):
     summary="Listar demarcaciones hidrográficas",
     description="Devuelve todas las demarcaciones hidrográficas con su información organizativa"
 )
+@cache_response(ttl=7200)  # Cachear por 2 horas
 async def listar_demarcaciones():
     """Obtiene la lista de demarcaciones hidrográficas."""
     try:

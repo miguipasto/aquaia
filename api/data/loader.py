@@ -25,13 +25,11 @@ class DataLoader:
         Inicializa la conexión a la base de datos.
         Debe llamarse al arrancar la aplicación.
         """
-        logger.info("🔌 Inicializando conexión a base de datos...")
+        logger.info("Inicializando conexión a base de datos")
         db_connection.initialize_pool(minconn=2, maxconn=10)
         
-        # Probar conexión
         if db_connection.test_connection():
-            logger.info("✓ Base de datos conectada correctamente")
-            # Cargar caché de estaciones
+            logger.info("Base de datos conectada correctamente")
             self._load_estaciones_cache()
         else:
             raise RuntimeError("No se pudo conectar a la base de datos PostgreSQL")
@@ -60,7 +58,7 @@ class DataLoader:
         
         results = db_connection.execute_query(query)
         self._estaciones_cache = {row['codigo_saih']: dict(row) for row in results}
-        logger.info(f"✓ Caché de estaciones cargada: {len(self._estaciones_cache)} estaciones")
+        logger.info(f"Caché de estaciones cargada: {len(self._estaciones_cache)} estaciones")
     
     def get_embalses_list(self) -> List[Dict]:
         """
@@ -115,7 +113,7 @@ class DataLoader:
             for row in results
         ]
         
-        logger.info(f"✓ Lista de embalses obtenida: {len(self._embalses_cache)} embalses")
+        logger.info(f"Lista de embalses obtenida: {len(self._embalses_cache)} embalses")
         return self._embalses_cache
     
     def get_embalse_data(self, codigo_saih: str) -> pd.DataFrame:

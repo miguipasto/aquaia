@@ -20,22 +20,8 @@ class RiskService:
         umbral_minimo: Optional[float] = None,
         umbral_maximo: Optional[float] = None
     ) -> Dict:
-        """
-        Analiza el riesgo de un embalse basándose en predicciones operativas.
-        
-        Args:
-            codigo_saih: Código del embalse
-            fecha_inicio: Fecha de inicio de análisis (si None, usa la última disponible)
-            horizonte_dias: Horizonte de predicción en días
-            umbral_minimo: Umbral mínimo de nivel seguro
-            umbral_maximo: Umbral máximo de nivel seguro
-            
-        Returns:
-            Diccionario con análisis de riesgo y recomendación
-        """
+        """Analiza el riesgo de un embalse basándose en predicciones operativas."""
         from ..data import data_loader
-        
-        # Usar umbrales por defecto si no se proporcionan
         if umbral_minimo is None:
             umbral_minimo = settings.default_risk_min_threshold
         if umbral_maximo is None:
@@ -47,22 +33,19 @@ class RiskService:
             fecha_dt = pd.to_datetime(fecha_max) - pd.Timedelta(days=horizonte_dias)
             fecha_inicio = fecha_dt.strftime('%Y-%m-%d')
         
-        # Obtener predicción operativa (con ruido)
+        # Obtener predicción operativa
         df_pred = prediction_service.predecir_embalse(
             codigo_saih=codigo_saih,
             fecha=fecha_inicio,
             horizonte=horizonte_dias
         )
         
-        # Usar la predicción operativa (aemet_ruido) para el análisis
-        niveles_pred = df_pred['pred_aemet_ruido'].values
+        niveles_pred = df_pred['pred'].values
         
-        # Calcular estadísticas
         nivel_min = float(np.min(niveles_pred))
         nivel_max = float(np.max(niveles_pred))
         nivel_medio = float(np.mean(niveles_pred))
         
-        # Calcular probabilidades de riesgo
         n_total = len(niveles_pred)
         n_bajo = np.sum(niveles_pred < umbral_minimo)
         n_alto = np.sum(niveles_pred > umbral_maximo)
@@ -72,7 +55,6 @@ class RiskService:
         prob_alto = n_alto / n_total
         prob_medio = n_medio / n_total
         
-        # Determinar categoría de riesgo y mensaje
         categoria, mensaje = RiskService._clasificar_riesgo(
             prob_bajo=prob_bajo,
             prob_alto=prob_alto,

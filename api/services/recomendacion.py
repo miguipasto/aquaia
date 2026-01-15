@@ -1,11 +1,5 @@
 """
-Servicio de generación de recomendaciones operativas basadas en predicciones.
-
-Este módulo implementa la lógica de negocio para:
-- Evaluar riesgos de embalses basándose en predicciones del modelo LSTM
-- Clasificar niveles de riesgo (BAJO, MODERADO, ALTO, SEQUÍA)
-- Generar recomendaciones operativas automáticas
-- Calcular probabilidades y métricas de riesgo
+Servicio de generación de recomendaciones operativas.
 """
 import logging
 from datetime import datetime, date, timedelta
@@ -38,10 +32,6 @@ class RecomendacionService:
         from ..services import prediction_service
         self.prediction_service = prediction_service
         self.db = db_connection
-    
-    # =========================================================================
-    # FUNCIONES DE CONFIGURACIÓN
-    # =========================================================================
     
     def obtener_configuracion_embalse(self, codigo_saih: str) -> Dict:
         """
@@ -78,10 +68,6 @@ class RecomendacionService:
                     'prob_umbral_alto': 0.50
                 }
     
-    # =========================================================================
-    # FUNCIONES DE EVALUACIÓN DE RIESGO
-    # =========================================================================
-    
     def evaluar_riesgo_embalse(
         self,
         codigo_saih: str,
@@ -91,13 +77,6 @@ class RecomendacionService:
     ) -> RecomendacionOperativaDTO:
         """
         Evalúa el riesgo de un embalse y genera recomendación operativa.
-        
-        Proceso:
-        1. Verifica si existe recomendación reciente (< 6 horas)
-        2. Obtiene configuración específica del embalse
-        3. Genera predicción operativa (AEMET + ruido)
-        4. Calcula niveles esperados con intervalo de confianza
-        5. Clasifica el riesgo según umbrales
         6. Genera textos de motivo y acción
         7. Persiste en BD y retorna DTO
         
@@ -162,7 +141,7 @@ class RecomendacionService:
                 punto = {
                     'fecha': row['fecha'].strftime('%Y-%m-%d') if hasattr(row['fecha'], 'strftime') else str(row['fecha']),
                     'pred_hist': float(row['pred_hist']) if pd.notna(row['pred_hist']) else None,
-                    'pred_aemet_ruido': float(row['pred_aemet_ruido']) if pd.notna(row['pred_aemet_ruido']) else None,
+                    'pred': float(row['pred']) if pd.notna(row['pred']) else None,
                     'nivel_real': float(row['nivel_real']) if pd.notna(row['nivel_real']) else None
                 }
                 prediccion['predicciones'].append(punto)
@@ -288,13 +267,13 @@ class RecomendacionService:
         Returns:
             Diccionario con métricas calculadas
         """
-        # Extraer serie de predicción operativa (AEMET + ruido)
+        # Extraer serie de predicción operativa
         pred_serie = []
         nivel_actual = None
         
         for punto in prediccion.get('predicciones', []):
-            if 'pred_aemet_ruido' in punto:
-                pred_serie.append(punto['pred_aemet_ruido'])
+            if 'pred' in punto:
+                pred_serie.append(punto['pred'])
             if nivel_actual is None and 'nivel_real' in punto and punto['nivel_real']:
                 nivel_actual = punto['nivel_real']
         

@@ -20,31 +20,29 @@ class DatabaseConnection:
         """Inicializa el gestor de conexiones."""
         self.pool: Optional[SimpleConnectionPool] = None
         
-    def initialize_pool(self, minconn: int = 1, maxconn: int = 10):
-        """
-        Inicializa el pool de conexiones a PostgreSQL.
-        
-        Args:
-            minconn: Número mínimo de conexiones en el pool
-            maxconn: Número máximo de conexiones en el pool
-        """
+    def initialize_pool(self, minconn: int = None, maxconn: int = None):
+        """Inicializa el pool de conexiones a PostgreSQL."""
         if self.pool is not None:
             logger.warning("Pool de conexiones ya inicializado")
             return
+        
+        minconn = minconn or settings.db_pool_min
+        maxconn = maxconn or settings.db_pool_max
         
         try:
             self.pool = SimpleConnectionPool(
                 minconn=minconn,
                 maxconn=maxconn,
                 user=settings.db_user,
-                password=settings.db_pass,
+                password=settings.db_password,
                 host=settings.db_host,
                 port=settings.db_port,
-                database=settings.db_name
+                database=settings.db_name,
+                connect_timeout=settings.db_connect_timeout
             )
-            logger.info(f"✓ Pool de conexiones inicializado: {minconn}-{maxconn} conexiones")
+            logger.info(f"Pool de conexiones inicializado: {minconn}-{maxconn} conexiones")
         except Exception as e:
-            logger.error(f"❌ Error al inicializar pool de conexiones: {e}")
+            logger.error(f"Error al inicializar pool de conexiones: {e}")
             raise
     
     def close_pool(self):
@@ -56,12 +54,7 @@ class DatabaseConnection:
     
     @contextmanager
     def get_connection(self):
-        """
-        Context manager para obtener una conexión del pool.
-        
-        Yields:
-            Conexión de PostgreSQL
-        """
+        """Context manager para obtener una conexión del pool."""
         if self.pool is None:
             raise RuntimeError("Pool de conexiones no inicializado. Llame a initialize_pool() primero.")
         
@@ -75,15 +68,7 @@ class DatabaseConnection:
     
     @contextmanager
     def get_cursor(self, dict_cursor: bool = True):
-        """
-        Context manager para obtener un cursor.
-        
-        Args:
-            dict_cursor: Si True, devuelve un cursor de diccionarios
-            
-        Yields:
-            Cursor de PostgreSQL
-        """
+        """Context manager para obtener un cursor."""
         with self.get_connection() as conn:
             cursor_factory = RealDictCursor if dict_cursor else None
             cursor = conn.cursor(cursor_factory=cursor_factory)
@@ -146,11 +131,11 @@ class DatabaseConnection:
         try:
             result = self.execute_query("SELECT version();")
             if result:
-                logger.info(f"✓ Conexión exitosa a PostgreSQL: {result[0]['version'][:50]}...")
+                logger.info(f"Conexión exitosa a PostgreSQL: {result[0]['version'][:50]}...")
                 return True
             return False
         except Exception as e:
-            logger.error(f"❌ Error al probar conexión: {e}")
+            logger.error(f"Error al probar conexión: {e}")
             return False
 
 

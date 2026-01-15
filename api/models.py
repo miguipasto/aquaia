@@ -62,7 +62,7 @@ class PrediccionPunto(BaseModel):
     """Punto de predicción con dos escenarios."""
     fecha: str = Field(..., description="Fecha de la predicción")
     pred_hist: float = Field(..., description="Predicción solo con datos históricos")
-    pred_aemet_ruido: float = Field(..., description="Predicción con datos AEMET + ruido (operativa)")
+    pred: float = Field(..., description="Predicción operativa (incluye datos meteorológicos)")
     nivel_real: Optional[float] = Field(None, description="Nivel real observado (si disponible)")
     
     class Config:
@@ -70,7 +70,7 @@ class PrediccionPunto(BaseModel):
             "example": {
                 "fecha": "2024-03-01",
                 "pred_hist": 305.5,
-                "pred_aemet_ruido": 306.8,
+                "pred": 306.8,
                 "nivel_real": 306.5
             }
         }
@@ -116,7 +116,7 @@ class PrediccionResponse(BaseModel):
                     {
                         "fecha": "2024-02-02",
                         "pred_hist": 305.5,
-                        "pred_aemet_ruido": 306.8,
+                        "pred": 306.8,
                         "nivel_real": 306.5
                     }
                 ]
