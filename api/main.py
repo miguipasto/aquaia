@@ -24,11 +24,17 @@ from .models import (
     OrganismoGestor,
     Geografia,
     EstadisticasRegion,
-    ComparacionResponse
+    ComparacionResponse,
+    DashboardKPIs,
+    EmbalseActual,
+    Alerta,
+    AlertasResponse,
+    ConfiguracionAlerta
 )
 from .data import data_loader, db_connection
 from .services import prediction_service, risk_service
 from .routers import recomendaciones as recomendaciones_router
+from .routers import dashboard as dashboard_router
 from .middleware import SecurityMiddleware, RateLimitMiddleware, cache_response
 from .middleware.cache import get_cache_stats, clear_cache
 
@@ -94,7 +100,9 @@ app.add_middleware(
 app.add_middleware(SecurityMiddleware)
 app.add_middleware(RateLimitMiddleware)
 
+# Incluir routers
 app.include_router(recomendaciones_router.router)
+app.include_router(dashboard_router.router)
 
 
 @app.get(
@@ -183,11 +191,12 @@ async def clear_cache_endpoint():
     summary="Listar embalses disponibles",
     description="Devuelve la lista completa de embalses disponibles en el sistema con sus datos básicos"
 )
-@cache_response(ttl=3600)  # Cachear por 1 hora
-async def listar_embalses():
+async def listar_embalses(
+    fecha_referencia: Optional[str] = Query(None, description="Fecha de referencia para niveles (YYYY-MM-DD)")
+):
     """Obtiene la lista de todos los embalses disponibles."""
     try:
-        embalses = data_loader.get_embalses_list()
+        embalses = data_loader.get_embalses_list(fecha_referencia)
         return embalses
     except Exception as e:
         logger.error(f"Error al listar embalses: {e}")

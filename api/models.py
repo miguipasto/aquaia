@@ -2,7 +2,7 @@
 Modelos Pydantic para request/response de la API.
 """
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import date, datetime
 
 
@@ -18,7 +18,9 @@ class EmbalseInfo(BaseModel):
     tipo_gestion: Optional[str] = Field(None, description="Tipo de gestión (Estatal/Autonómica)")
     coord_x: Optional[float] = Field(None, description="Coordenada X (UTM ETRS89)")
     coord_y: Optional[float] = Field(None, description="Coordenada Y (UTM ETRS89)")
-    nivel_maximo: Optional[float] = Field(None, description="Nivel máximo del embalse (hm³)")
+    nivel_maximo: Optional[float] = Field(None, description="Nivel máximo del embalse (msnm)")
+    ultimo_nivel: Optional[float] = Field(None, description="Último nivel registrado (msnm)")
+    fecha_ultimo_registro: Optional[str] = Field(None, description="Fecha del último registro")
     
     class Config:
         json_schema_extra = {
@@ -33,7 +35,9 @@ class EmbalseInfo(BaseModel):
                 "tipo_gestion": "Autonómica",
                 "coord_x": 612345.67,
                 "coord_y": 4756789.12,
-                "nivel_maximo": 654.0
+                "nivel_maximo": 654.0,
+                "ultimo_nivel": 308.5,
+                "fecha_ultimo_registro": "2024-12-14"
             }
         }
 
@@ -41,7 +45,7 @@ class EmbalseInfo(BaseModel):
 class SerieHistoricaPunto(BaseModel):
     """Punto de datos históricos."""
     fecha: str = Field(..., description="Fecha en formato ISO (YYYY-MM-DD)")
-    nivel: float = Field(..., description="Nivel del embalse (hm³)")
+    nivel: float = Field(..., description="Nivel del embalse (msnm)")
     precipitacion: Optional[float] = Field(None, description="Precipitación (mm)")
     temperatura: Optional[float] = Field(None, description="Temperatura (°C)")
     caudal_promedio: Optional[float] = Field(None, description="Caudal promedio (m³/s)")
@@ -128,8 +132,8 @@ class RiesgoRequest(BaseModel):
     """Request para análisis de riesgo."""
     fecha_inicio: Optional[str] = Field(None, description="Fecha de inicio (si no se proporciona, usa la última disponible)")
     horizonte_dias: int = Field(90, ge=1, le=180, description="Horizonte de predicción en días")
-    umbral_minimo: Optional[float] = Field(None, description="Umbral mínimo de nivel (hm³)")
-    umbral_maximo: Optional[float] = Field(None, description="Umbral máximo de nivel (hm³)")
+    umbral_minimo: Optional[float] = Field(None, description="Umbral mínimo de nivel (msnm)")
+    umbral_maximo: Optional[float] = Field(None, description="Umbral máximo de nivel (msnm)")
     
     @field_validator('fecha_inicio')
     @classmethod
@@ -310,12 +314,12 @@ class EstadisticasRegion(BaseModel):
     region_nombre: str = Field(..., description="Nombre de la región")
     region_tipo: str = Field(..., description="Tipo de región (ccaa/provincia/demarcacion)")
     num_embalses: int = Field(..., description="Número de embalses")
-    nivel_total_actual: float = Field(..., description="Nivel total actual (hm³)")
-    capacidad_total: float = Field(..., description="Capacidad total (hm³)")
+    nivel_total_actual: float = Field(..., description="Nivel total actual (msnm)")
+    capacidad_total: float = Field(..., description="Capacidad total (msnm)")
     porcentaje_llenado: float = Field(..., description="Porcentaje de llenado promedio")
-    nivel_promedio: float = Field(..., description="Nivel promedio (hm³)")
-    nivel_min: float = Field(..., description="Nivel mínimo (hm³)")
-    nivel_max: float = Field(..., description="Nivel máximo (hm³)")
+    nivel_promedio: float = Field(..., description="Nivel promedio (msnm)")
+    nivel_min: float = Field(..., description="Nivel mínimo (msnm)")
+    nivel_max: float = Field(..., description="Nivel máximo (msnm)")
     ultima_actualizacion: str = Field(..., description="Fecha de última actualización")
     
     class Config:
@@ -353,3 +357,143 @@ class ComparacionResponse(BaseModel):
     fecha_consulta: str
     embalses: List[ComparacionEmbalse]
     resumen: dict = Field(..., description="Resumen estadístico de la comparación")
+
+
+# =============================================================================
+# MODELOS PARA DASHBOARD
+# =============================================================================
+
+class DashboardKPIs(BaseModel):
+    """KPIs agregados del sistema para el dashboard."""
+    fecha_referencia: str = Field(..., description="Fecha de referencia de los datos")
+    num_embalses: int = Field(..., description="Número total de embalses monitorizados")
+    capacidad_total: float = Field(..., description="Capacidad total del sistema (msnm)")
+    nivel_total_actual: float = Field(..., description="Nivel total actual (msnm)")
+    porcentaje_llenado_promedio: float = Field(..., description="Porcentaje promedio de llenado")
+    num_embalses_criticos: int = Field(..., description="Número de embalses en estado crítico")
+    num_alertas_activas: int = Field(..., description="Número de alertas activas")
+    tendencia: str = Field(..., description="Tendencia general: aumento, descenso, estable")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "fecha_referencia": "2024-12-14",
+                "num_embalses": 25,
+                "capacidad_total": 5000.0,
+                "nivel_total_actual": 3500.0,
+                "porcentaje_llenado_promedio": 70.0,
+                "num_embalses_criticos": 3,
+                "num_alertas_activas": 5,
+                "tendencia": "estable"
+            }
+        }
+
+
+class EmbalseActual(BaseModel):
+    """Datos actuales de un embalse para una fecha de referencia."""
+    codigo_saih: str
+    ubicacion: str
+    municipio: Optional[str] = None
+    provincia: Optional[str] = None
+    comunidad_autonoma: Optional[str] = None
+    demarcacion: Optional[str] = None
+    fecha_referencia: str = Field(..., description="Fecha de referencia de los datos")
+    nivel_actual: float = Field(..., description="Nivel actual (msnm)")
+    nivel_maximo: Optional[float] = Field(None, description="Nivel máximo (msnm)")
+    porcentaje_llenado: Optional[float] = Field(None, description="Porcentaje de llenado")
+    estado: str = Field(..., description="Estado del embalse: normal, bajo, critico_bajo, alto, critico_alto")
+    precipitacion_actual: Optional[float] = Field(None, description="Precipitación reciente (mm)")
+    temperatura_actual: Optional[float] = Field(None, description="Temperatura actual (°C)")
+    caudal_actual: Optional[float] = Field(None, description="Caudal actual (m³/s)")
+    nivel_min_30d: Optional[float] = Field(None, description="Nivel mínimo últimos 30 días")
+    nivel_max_30d: Optional[float] = Field(None, description="Nivel máximo últimos 30 días")
+    nivel_medio_30d: Optional[float] = Field(None, description="Nivel medio últimos 30 días")
+    variacion_30d: Optional[float] = Field(None, description="Variación respecto hace 30 días")
+    precipitacion_acumulada_30d: Optional[float] = Field(None, description="Precipitación acumulada 30 días (mm)")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "codigo_saih": "E001",
+                "ubicacion": "Belesar",
+                "municipio": "Portomarín",
+                "provincia": "Lugo",
+                "comunidad_autonoma": "Galicia",
+                "demarcacion": "Demarcación Hidrográfica Galicia-Costa",
+                "fecha_referencia": "2024-12-14",
+                "nivel_actual": 308.5,
+                "nivel_maximo": 654.0,
+                "porcentaje_llenado": 47.2,
+                "estado": "normal",
+                "precipitacion_actual": 5.2,
+                "temperatura_actual": 8.4,
+                "caudal_actual": 14.69,
+                "nivel_min_30d": 295.3,
+                "nivel_max_30d": 318.7,
+                "nivel_medio_30d": 306.2,
+                "variacion_30d": 2.3,
+                "precipitacion_acumulada_30d": 156.8
+            }
+        }
+
+
+class Alerta(BaseModel):
+    """Información de una alerta del sistema."""
+    id: str = Field(..., description="ID único de la alerta")
+    codigo_saih: str = Field(..., description="Código SAIH del embalse")
+    ubicacion: str = Field(..., description="Nombre del embalse")
+    tipo: str = Field(..., description="Tipo de alerta")
+    severidad: str = Field(..., description="Severidad: info, warning, error, critical")
+    mensaje: str = Field(..., description="Mensaje descriptivo de la alerta")
+    valor_actual: float = Field(..., description="Valor actual que generó la alerta")
+    umbral: float = Field(..., description="Umbral que se superó o no alcanzó")
+    fecha_deteccion: str = Field(..., description="Fecha de detección")
+    demarcacion: Optional[str] = Field(None, description="Demarcación hidrográfica")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": "E001_nivel_bajo",
+                "codigo_saih": "E001",
+                "ubicacion": "Belesar",
+                "tipo": "NIVEL_BAJO",
+                "severidad": "warning",
+                "mensaje": "Nivel bajo: 28.5% de capacidad",
+                "valor_actual": 186.4,
+                "umbral": 196.2,
+                "fecha_deteccion": "2024-12-14",
+                "demarcacion": "Demarcación Hidrográfica Galicia-Costa"
+            }
+        }
+
+
+class AlertasResponse(BaseModel):
+    """Response con lista de alertas activas."""
+    fecha_referencia: str = Field(..., description="Fecha de referencia")
+    total_alertas: int = Field(..., description="Número total de alertas")
+    alertas_por_severidad: Dict[str, int] = Field(..., description="Conteo por severidad")
+    alertas: List[Alerta] = Field(..., description="Lista de alertas")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "fecha_referencia": "2024-12-14",
+                "total_alertas": 5,
+                "alertas_por_severidad": {
+                    "critical": 1,
+                    "error": 0,
+                    "warning": 3,
+                    "info": 1
+                },
+                "alertas": []
+            }
+        }
+
+
+class ConfiguracionAlerta(BaseModel):
+    """Configuración de umbrales para alertas."""
+    codigo_saih: Optional[str] = Field(None, description="Código del embalse (None para configuración global)")
+    umbral_critico_bajo: float = Field(20.0, description="Porcentaje para alerta crítica baja")
+    umbral_bajo: float = Field(30.0, description="Porcentaje para alerta baja")
+    umbral_alto: float = Field(80.0, description="Porcentaje para alerta alta")
+    umbral_critico_alto: float = Field(95.0, description="Porcentaje para alerta crítica alta")

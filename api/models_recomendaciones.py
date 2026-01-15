@@ -118,11 +118,11 @@ class RecomendacionOperativaDTO(BaseModel):
     color_hex: Optional[str] = Field(None, description="Color para visualización")
     
     # Niveles
-    nivel_actual: Optional[float] = Field(None, description="Nivel actual del embalse (hm³)")
-    nivel_predicho_min: Optional[float] = Field(None, description="Nivel predicho mínimo (hm³)")
-    nivel_predicho_max: Optional[float] = Field(None, description="Nivel predicho máximo (hm³)")
-    nivel_predicho_medio: Optional[float] = Field(None, description="Nivel predicho medio (hm³)")
-    nivel_maximo: Optional[float] = Field(None, description="Capacidad máxima del embalse (hm³)")
+    nivel_actual: Optional[float] = Field(None, description="Nivel actual del embalse (msnm)")
+    nivel_predicho_min: Optional[float] = Field(None, description="Nivel predicho mínimo (msnm)")
+    nivel_predicho_max: Optional[float] = Field(None, description="Nivel predicho máximo (msnm)")
+    nivel_predicho_medio: Optional[float] = Field(None, description="Nivel predicho medio (msnm)")
+    nivel_maximo: Optional[float] = Field(None, description="Capacidad máxima del embalse (msnm)")
     
     # Métricas
     mae_historico: Optional[float] = Field(None, description="MAE histórico del modelo para este embalse")

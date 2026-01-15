@@ -60,43 +60,76 @@ class DataLoader:
         self._estaciones_cache = {row['codigo_saih']: dict(row) for row in results}
         logger.info(f"Caché de estaciones cargada: {len(self._estaciones_cache)} estaciones")
     
-    def get_embalses_list(self) -> List[Dict]:
+    def get_embalses_list(self, fecha_referencia: Optional[str] = None) -> List[Dict]:
         """
         Obtiene la lista de embalses disponibles con información completa.
+        
+        Args:
+            fecha_referencia: Fecha opcional para obtener niveles históricos (YYYY-MM-DD)
         
         Returns:
             Lista de diccionarios con información de cada embalse
         """
-        if self._embalses_cache is not None:
+        # Si hay fecha de referencia, no usar caché
+        if fecha_referencia is None and self._embalses_cache is not None:
             return self._embalses_cache
         
-        # Query para obtener embalses con información completa
-        query = """
-        SELECT DISTINCT
-            e.codigo_saih,
-            e.ubicacion,
-            m.nombre as municipio,
-            p.nombre as provincia,
-            ca.nombre as comunidad_autonoma,
-            d.nombre as demarcacion,
-            og.nombre as organismo_gestor,
-            og.tipo_gestion,
-            e.coord_x,
-            e.coord_y,
-            e.nivel_maximo
-        FROM estacion_saih e
-        INNER JOIN saih_nivel_embalse sne ON e.codigo_saih = sne.codigo_saih
-        LEFT JOIN municipio m ON e.id_municipio = m.id
-        LEFT JOIN provincia p ON m.id_provincia = p.id
-        LEFT JOIN comunidad_autonoma ca ON p.id_ccaa = ca.id
-        LEFT JOIN demarcacion d ON e.id_demarcacion = d.id
-        LEFT JOIN organismo_gestor og ON d.id_gestor = og.id
-        ORDER BY e.codigo_saih
-        """
+        # Query para obtener embalses con información completa incluyendo último nivel
+        if fecha_referencia:
+            query = """
+            SELECT DISTINCT ON (e.codigo_saih)
+                e.codigo_saih,
+                e.ubicacion,
+                m.nombre as municipio,
+                p.nombre as provincia,
+                ca.nombre as comunidad_autonoma,
+                d.nombre as demarcacion,
+                og.nombre as organismo_gestor,
+                og.tipo_gestion,
+                e.coord_x,
+                e.coord_y,
+                e.nivel_maximo,
+                sne.nivel as ultimo_nivel,
+                sne.fecha as fecha_ultimo_registro
+            FROM estacion_saih e
+            INNER JOIN saih_nivel_embalse sne ON e.codigo_saih = sne.codigo_saih
+            LEFT JOIN municipio m ON e.id_municipio = m.id
+            LEFT JOIN provincia p ON m.id_provincia = p.id
+            LEFT JOIN comunidad_autonoma ca ON p.id_ccaa = ca.id
+            LEFT JOIN demarcacion d ON e.id_demarcacion = d.id
+            LEFT JOIN organismo_gestor og ON d.id_gestor = og.id
+            WHERE sne.fecha <= %s
+            ORDER BY e.codigo_saih, sne.fecha DESC
+            """
+            results = db_connection.execute_query(query, (fecha_referencia,))
+        else:
+            query = """
+            SELECT DISTINCT ON (e.codigo_saih)
+                e.codigo_saih,
+                e.ubicacion,
+                m.nombre as municipio,
+                p.nombre as provincia,
+                ca.nombre as comunidad_autonoma,
+                d.nombre as demarcacion,
+                og.nombre as organismo_gestor,
+                og.tipo_gestion,
+                e.coord_x,
+                e.coord_y,
+                e.nivel_maximo,
+                sne.nivel as ultimo_nivel,
+                sne.fecha as fecha_ultimo_registro
+            FROM estacion_saih e
+            INNER JOIN saih_nivel_embalse sne ON e.codigo_saih = sne.codigo_saih
+            LEFT JOIN municipio m ON e.id_municipio = m.id
+            LEFT JOIN provincia p ON m.id_provincia = p.id
+            LEFT JOIN comunidad_autonoma ca ON p.id_ccaa = ca.id
+            LEFT JOIN demarcacion d ON e.id_demarcacion = d.id
+            LEFT JOIN organismo_gestor og ON d.id_gestor = og.id
+            ORDER BY e.codigo_saih, sne.fecha DESC
+            """
+            results = db_connection.execute_query(query)
         
-        results = db_connection.execute_query(query)
-        
-        self._embalses_cache = [
+        embalses_list = [
             {
                 'codigo_saih': row['codigo_saih'],
                 'ubicacion': row['ubicacion'],
@@ -108,13 +141,19 @@ class DataLoader:
                 'tipo_gestion': row['tipo_gestion'],
                 'coord_x': float(row['coord_x']) if row['coord_x'] is not None else None,
                 'coord_y': float(row['coord_y']) if row['coord_y'] is not None else None,
-                'nivel_maximo': float(row['nivel_maximo']) if row['nivel_maximo'] is not None else None
+                'nivel_maximo': float(row['nivel_maximo']) if row['nivel_maximo'] is not None else None,
+                'ultimo_nivel': float(row['ultimo_nivel']) if row['ultimo_nivel'] is not None else 0.0,
+                'fecha_ultimo_registro': row['fecha_ultimo_registro'].strftime('%Y-%m-%d') if row['fecha_ultimo_registro'] is not None else None
             }
             for row in results
         ]
         
-        logger.info(f"Lista de embalses obtenida: {len(self._embalses_cache)} embalses")
-        return self._embalses_cache
+        # Solo cachear si no hay fecha de referencia
+        if fecha_referencia is None:
+            self._embalses_cache = embalses_list
+        
+        logger.info(f"Lista de embalses obtenida: {len(embalses_list)} embalses")
+        return embalses_list
     
     def get_embalse_data(self, codigo_saih: str) -> pd.DataFrame:
         """
