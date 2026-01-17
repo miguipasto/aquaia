@@ -1,17 +1,39 @@
-import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FileText, Filter, TrendingUp } from 'lucide-react'
+import { FileText, Filter, TrendingUp, Sparkles, RefreshCw, Zap, Database, FileCode } from 'lucide-react'
 import useDateStore from '../../store/dateStore'
-import { getEmbalses, getRecomendacion } from '../../services/dashboardService'
+import { getEmbalses, getRecomendacion, getLLMSalud, getLLMEstadisticas, generarRecomendacionForzada } from '../../services/dashboardService'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import Alert from '../../components/Alert/Alert'
+import FuenteBadge from '../../components/FuenteBadge/FuenteBadge'
 import { getRiesgoColor, formatNumber } from '../../lib/utils'
 
 function RecomendacionCard({ embalse, fechaRef }) {
-  const { data: recomendacion, isLoading } = useQuery({
+  const queryClient = useQueryClient()
+  const { data: recomendacion, isLoading, refetch } = useQuery({
     queryKey: ['recomendacion', embalse.codigo_saih, fechaRef],
     queryFn: () => getRecomendacion(embalse.codigo_saih, fechaRef),
+    refetchInterval: (data) => {
+      // Si la fuente no es 'llm' y existe, refetch cada 10 segundos para obtener versión con IA
+      if (data && data.fuente_recomendacion !== 'llm') {
+        return 10000
+      }
+      return false
+    }
+  })
+
+  const regenerarMutation = useMutation({
+    mutationFn: () => generarRecomendacionForzada(embalse.codigo_saih, {
+      fecha_inicio: fechaRef,
+      horizonte_dias: 7
+    }),
+    onSuccess: () => {
+      // Esperar un momento y luego hacer refetch continuo
+      setTimeout(() => {
+        queryClient.invalidateQueries(['recomendacion', embalse.codigo_saih, fechaRef])
+      }, 1000)
+    }
   })
 
   if (isLoading) {
@@ -27,10 +49,41 @@ function RecomendacionCard({ embalse, fechaRef }) {
   }
 
   const riesgoColor = getRiesgoColor(recomendacion.nivel_riesgo)
+  const esProcesamientoIA = recomendacion.fuente_recomendacion !== 'llm' && recomendacion.fuente_recomendacion !== 'plantilla'
 
   return (
-    <div className={`card border-l-4 border-${riesgoColor}-500`}>
-      <div className="flex items-start justify-between mb-3">
+    <div className={`card border-l-4 border-${riesgoColor}-500 relative`}>
+      {/* Indicador de procesamiento en background */}
+      {esProcesamientoIA && (
+        <div className="absolute top-3 left-3">
+          <div className="flex items-center space-x-1 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+            <RefreshCw size={12} className="animate-spin" />
+            <span>Generando con IA...</span>
+          </div>
+        </div>
+      )}
+      
+      {/* Badge de fuente y botón de regeneración */}
+      <div className="absolute top-3 right-3 flex items-center space-x-2">
+        <FuenteBadge 
+          fuente={recomendacion.fuente_recomendacion}
+          generadoPorLlm={recomendacion.generado_por_llm}
+          showLabel={false}
+        />
+        <button
+          onClick={() => regenerarMutation.mutate()}
+          disabled={regenerarMutation.isPending}
+          className="p-1.5 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
+          title="Regenerar recomendación"
+        >
+          <RefreshCw 
+            size={14} 
+            className={`text-gray-600 ${regenerarMutation.isPending ? 'animate-spin' : ''}`}
+          />
+        </button>
+      </div>
+
+      <div className="flex items-start justify-between mb-3 pr-20">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
             <h3 className="font-semibold text-gray-900">{embalse.ubicacion}</h3>
@@ -38,16 +91,16 @@ function RecomendacionCard({ embalse, fechaRef }) {
               {recomendacion.nivel_riesgo}
             </span>
           </div>
-          <p className="text-sm text-gray-500">{embalse.provincia}</p>
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <span>{embalse.provincia}</span>
+            {recomendacion.horizonte_dias && (
+              <>
+                <span className="text-gray-400">•</span>
+                <span>Horizonte: {recomendacion.horizonte_dias}d</span>
+              </>
+            )}
+          </div>
         </div>
-        
-        <Link
-          to={`/predicciones/${embalse.codigo_saih}`}
-          className="btn-secondary text-sm"
-        >
-          <TrendingUp size={16} className="mr-1" />
-          Ver detalles
-        </Link>
       </div>
 
       <p className="text-sm text-gray-700 mb-3">
@@ -71,10 +124,12 @@ function RecomendacionCard({ embalse, fechaRef }) {
 
       {recomendacion.accion_recomendada && (
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-1">Acción principal:</p>
-          <p className="text-sm text-gray-600 italic">
-            {recomendacion.accion_recomendada}
-          </p>
+          <p className="text-sm font-medium text-gray-700 mb-2">Acciones recomendadas:</p>
+          <div 
+            className="text-sm text-gray-600 prose prose-sm max-w-none"
+            style={{ listStylePosition: 'inside' }}
+            dangerouslySetInnerHTML={{ __html: recomendacion.accion_recomendada }}
+          />
         </div>
       )}
     </div>
@@ -85,11 +140,26 @@ function Recommendations() {
   const { simulatedDate } = useDateStore()
   const [filterRiesgo, setFilterRiesgo] = useState('')
   const [filterProvincia, setFilterProvincia] = useState('')
+  const [showLLMInfo, setShowLLMInfo] = useState(false)
 
   // Obtener lista de embalses
   const { data: embalses, isLoading, error } = useQuery({
     queryKey: ['embalses', simulatedDate],
     queryFn: () => getEmbalses(simulatedDate),
+  })
+
+  // Obtener estado de Ollama
+  const { data: llmSalud } = useQuery({
+    queryKey: ['llm-salud'],
+    queryFn: getLLMSalud,
+    refetchInterval: 30000, // Refrescar cada 30 segundos
+  })
+
+  // Obtener estadísticas de LLM
+  const { data: llmStats } = useQuery({
+    queryKey: ['llm-stats'],
+    queryFn: getLLMEstadisticas,
+    enabled: showLLMInfo,
   })
 
   if (isLoading) {
@@ -134,13 +204,72 @@ function Recommendations() {
         </p>
       </div>
 
-      {/* Información */}
-      <Alert
-        type="info"
-        title="Sistema de Recomendaciones Inteligente"
-        message="Las recomendaciones se generan automáticamente basándose en predicciones LSTM con datos meteorológicos AEMET y análisis de riesgo operativo."
-      />
+      {/* Estado de IA */}
+      {llmSalud && (
+        <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start space-x-3">
+              <div className={`mt-1 p-2 rounded-full ${
+                llmSalud.disponible && llmSalud.modelo_disponible
+                  ? 'bg-green-100 text-green-600'
+                  : 'bg-yellow-100 text-yellow-600'
+              }`}>
+                <Zap size={20} />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h3 className="font-semibold text-gray-900">Sistema de IA (Ollama)</h3>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    llmSalud.disponible && llmSalud.modelo_disponible
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {llmSalud.disponible && llmSalud.modelo_disponible ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  {llmSalud.disponible && llmSalud.modelo_disponible ? (
+                    <>
+                      Modelo <span className="font-mono font-medium">{llmSalud.modelo_configurado}</span> disponible.
+                      Las recomendaciones se generan con IA para mayor precisión contextual.
+                    </>
+                  ) : (
+                    'IA no disponible. Usando recomendaciones basadas en plantillas.'
+                  )}
+                </p>
+                {showLLMInfo && llmStats && (
+                  <div className="mt-3 pt-3 border-t border-purple-200 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Total peticiones:</span>
+                      <span className="ml-2 font-medium">{llmStats.servicio.total_requests}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Cache hits:</span>
+                      <span className="ml-2 font-medium">{llmStats.servicio.cache_hit_rate}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Éxito LLM:</span>
+                      <span className="ml-2 font-medium">{llmStats.servicio.llm_success_rate}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Errores:</span>
+                      <span className="ml-2 font-medium">{llmStats.servicio.llm_errors}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setShowLLMInfo(!showLLMInfo)}
+              className="text-xs text-purple-600 hover:text-purple-700 font-medium"
+            >
+              {showLLMInfo ? 'Ocultar' : 'Ver'} estadísticas
+            </button>
+          </div>
+        </div>
+      )}
 
+      {/* Información */}
       {/* Filtros */}
       <div className="card">
         <div className="flex items-center space-x-2 mb-4">

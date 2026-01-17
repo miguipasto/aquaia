@@ -1,6 +1,7 @@
 """
 Servicio de generación de recomendaciones operativas.
 """
+import asyncio
 import logging
 from datetime import datetime, date, timedelta
 from typing import Optional, Dict, List, Tuple
@@ -30,7 +31,9 @@ class RecomendacionService:
         """Inicializa el servicio de recomendaciones."""
         # Importación tardía para evitar importación circular
         from ..services import prediction_service
+        from ..services.llm_service import llm_service
         self.prediction_service = prediction_service
+        self.llm_service = llm_service
         self.db = db_connection
     
     def obtener_configuracion_embalse(self, codigo_saih: str) -> Dict:
@@ -68,7 +71,7 @@ class RecomendacionService:
                     'prob_umbral_alto': 0.50
                 }
     
-    def evaluar_riesgo_embalse(
+    async def evaluar_riesgo_embalse(
         self,
         codigo_saih: str,
         fecha_inicio: Optional[date] = None,
@@ -77,8 +80,6 @@ class RecomendacionService:
     ) -> RecomendacionOperativaDTO:
         """
         Evalúa el riesgo de un embalse y genera recomendación operativa.
-        6. Genera textos de motivo y acción
-        7. Persiste en BD y retorna DTO
         
         Args:
             codigo_saih: Código SAIH del embalse
@@ -89,14 +90,24 @@ class RecomendacionService:
         Returns:
             RecomendacionOperativaDTO con la evaluación completa
         """
+        logger.info(f"Evaluating risk for {codigo_saih} (force={forzar_regeneracion})")
+        
         # 1. Verificar si existe recomendación reciente
         if not forzar_regeneracion:
             recomendacion_existente = self._obtener_recomendacion_reciente(
                 codigo_saih, fecha_inicio, horizonte
             )
             if recomendacion_existente:
-                logger.info(f"Usando recomendación existente para {codigo_saih}")
-                return recomendacion_existente
+                # SI LLM está habilitado pero la recomendación guardada NO es de LLM, 
+                # forzamos una nueva para que intente usar IA. Esto asegura que si 
+                # el sistema falló a estático antes, intente recuperarse.
+                if settings.enable_llm_recomendaciones and not recomendacion_existente.generado_por_llm:
+                    logger.info(f"Cached recommendation is static but LLM is active. Forcing regeneration with AI...")
+                else:
+                    logger.info(f"Using cached recommendation for {codigo_saih}")
+                    return recomendacion_existente
+        else:
+            logger.info(f"Forced regeneration for {codigo_saih}")
         
         # 2. Obtener configuración
         config = self.obtener_configuracion_embalse(codigo_saih)
@@ -122,7 +133,6 @@ class RecomendacionService:
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
         
         try:
-            # Usar el método predecir_embalse del servicio de predicción
             df_prediccion = self.prediction_service.predecir_embalse(
                 codigo_saih=codigo_saih,
                 fecha=fecha_inicio.strftime('%Y-%m-%d'),
@@ -156,12 +166,14 @@ class RecomendacionService:
         # 6. Clasificar riesgo
         clasificacion = self._clasificar_riesgo(metricas, config, nivel_maximo)
         
-        # 7. Generar textos de recomendación
-        textos = self._generar_textos_recomendacion(
+        # 7. Generar textos de recomendación (con fecha_inicio para caché)
+        fecha_inicio_str = fecha_inicio.strftime('%Y-%m-%d') if isinstance(fecha_inicio, date) else str(fecha_inicio)
+        textos = await self._generar_textos_recomendacion(
             clasificacion,
             metricas,
             info_embalse,
-            horizonte
+            horizonte,
+            fecha_inicio_str
         )
         
         # 8. Crear DTO de recomendación
@@ -186,7 +198,9 @@ class RecomendacionService:
             motivo=textos['motivo'],
             accion_recomendada=textos['accion'],
             config_id=config.get('id'),
-            version_modelo=settings.app_version
+            version_modelo=settings.app_version,
+            generado_por_llm=(textos.get('fuente') == 'llm'),
+            fuente_recomendacion=textos.get('fuente', 'estatica')
         )
         
         # 9. Persistir en base de datos
@@ -448,27 +462,57 @@ class RecomendacionService:
         
         return None
     
-    def _generar_textos_recomendacion(
+    async def _generar_textos_recomendacion(
         self,
         clasificacion: Dict,
         metricas: Dict,
         info_embalse: Dict,
-        horizonte: int
+        horizonte: int,
+        fecha_referencia: Optional[str] = None
     ) -> Dict:
         """
         Genera textos de motivo y acción recomendada.
         
-        Primero intenta usar plantillas de BD, si no encuentra usa generación básica.
+        Prioridad:
+        1. LLM (Ollama/Phi-3.5) si está habilitado
+        2. Plantillas de BD como fallback
+        3. Textos básicos hard-coded
+        
+        Returns:
+            Dict con 'motivo', 'accion' y 'fuente' ('llm', 'plantilla' o 'estatica')
         """
         nivel_riesgo = clasificacion['nivel_riesgo'].value
         porcentaje = (float(metricas['nivel_medio']) / float(info_embalse['nivel_maximo'])) * 100
         
-        # Intentar obtener plantillas de BD
+        motivo = None
+        accion = None
+        fuente = 'estatica'
+        
+        # PRIORIDAD 1: Generación usando LLM (Ollama/Phi-3.5)
+        logger.debug(f"LLM enabled: {settings.enable_llm_recomendaciones}")
+        if settings.enable_llm_recomendaciones:
+            try:
+                logger.info(f"Attempting to generate LLM recommendation for {info_embalse.get('ubicacion')}")
+                # Llamada asíncrona directa, ahora con fecha_referencia
+                motivo, accion = await self.llm_service.generar_recomendacion_async(
+                    nivel_riesgo, metricas, info_embalse, horizonte, porcentaje, fecha_referencia
+                )
+                if motivo and accion:
+                    logger.info(f"LLM recommendation generated successfully")
+                    fuente = 'llm'
+                    return {'motivo': motivo, 'accion': accion, 'fuente': fuente}
+            except Exception as e:
+                logger.error(f"LLM failed, using fallback: {type(e).__name__}: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
+        else:
+            logger.warning(f"LLM is disabled in settings")
+        
+        # PRIORIDAD 2: Plantillas de BD
         plantillas = self._obtener_plantillas(nivel_riesgo, porcentaje, metricas['tendencia'])
         
         if plantillas and 'motivo' in plantillas and 'accion' in plantillas:
             # Usar plantillas parametrizadas
-            # Asegurar que todos los valores no sean None
             mae_val = metricas.get('mae') or 0.0
             nivel_actual_val = metricas.get('nivel_actual') or metricas.get('nivel_medio', 0.0)
             
@@ -490,17 +534,21 @@ class RecomendacionService:
                 'volumen_reducir_max': volumen_reducir * 1.2,
                 'dias': horizonte
             })
-        else:
-            # Generación básica de textos
-            motivo, accion = self._generar_textos_basicos(
-                nivel_riesgo, metricas, info_embalse, horizonte, porcentaje
-            )
+            
+            fuente = 'plantilla'
+            return {'motivo': motivo, 'accion': accion, 'fuente': fuente}
+        
+        # PRIORIDAD 3: Generación básica hard-coded
+        motivo, accion = self._generar_textos_basicos(
+            nivel_riesgo, metricas, info_embalse, horizonte, porcentaje
+        )
         
         return {
             'motivo': motivo,
-            'accion': accion
+            'accion': accion,
+            'fuente': fuente
         }
-    
+
     def _obtener_plantillas(
         self,
         nivel_riesgo: str,
@@ -612,9 +660,10 @@ class RecomendacionService:
                 mae_historico, rmse_historico,
                 probabilidad_superar_umbral, dias_hasta_umbral,
                 motivo, accion_recomendada,
-                config_id, version_modelo
+                config_id, version_modelo,
+                generado_por_llm, fuente_recomendacion
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             RETURNING id
         """
@@ -638,7 +687,9 @@ class RecomendacionService:
                 recomendacion.motivo,
                 recomendacion.accion_recomendada,
                 recomendacion.config_id,
-                recomendacion.version_modelo
+                recomendacion.version_modelo,
+                recomendacion.generado_por_llm,
+                recomendacion.fuente_recomendacion
             ))
             
             result = cursor.fetchone()
@@ -817,7 +868,9 @@ class RecomendacionService:
             motivo=row['motivo'],
             accion_recomendada=row['accion_recomendada'],
             config_id=row.get('config_id'),
-            version_modelo=row.get('version_modelo')
+            version_modelo=row.get('version_modelo'),
+            generado_por_llm=row.get('generado_por_llm', False),
+            fuente_recomendacion=row.get('fuente_recomendacion', 'estatica')
         )
     
     def _row_to_resumen(self, row: Dict) -> RecomendacionResumen:
