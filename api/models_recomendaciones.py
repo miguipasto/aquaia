@@ -139,6 +139,8 @@ class RecomendacionOperativaDTO(BaseModel):
     # Metadata
     config_id: Optional[int] = Field(None, description="ID de configuración utilizada")
     version_modelo: Optional[str] = Field(None, description="Versión del modelo de predicción")
+    generado_por_llm: bool = Field(False, description="Indica si fue generado por IA (Ollama)")
+    fuente_recomendacion: str = Field("estatica", description="Fuente: 'llm', 'plantilla' o 'estatica'")
     
     class Config:
         from_attributes = True

@@ -96,12 +96,23 @@ class Settings(BaseSettings):
     )
     
     enable_cache: bool = Field(default=True, description="Habilitar caché")
-    cache_ttl: int = Field(default=3600, ge=60, description="TTL del caché (segundos)")
+    cache_ttl: int = Field(default=3600, ge=10, description="TTL del caché (segundos)")
     cache_max_size: int = Field(default=1000, ge=10, description="Tamaño máximo del caché")
+    
+    # Ollama para recomendaciones inteligentes
+    ollama_url: str = Field(default="http://localhost:11434", description="URL de la API de Ollama")
+    ollama_model: str = Field(default="phi3.5:latest", description="Modelo LLM a usar")
+    enable_llm_recomendaciones: bool = Field(default=False, description="Usar LLM para generar textos de recomendación")
+    ollama_timeout: int = Field(default=120, ge=10, le=300, description="Timeout para llamadas a Ollama (segundos)")
+    ollama_max_retries: int = Field(default=2, ge=0, le=5, description="Reintentos en caso de fallo")
+    ollama_temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Temperatura del modelo")
+    ollama_top_p: float = Field(default=0.9, ge=0.0, le=1.0, description="Top-p sampling")
+    llm_cache_ttl: int = Field(default=86400, ge=3600, description="TTL del caché de respuestas LLM (segundos)")
+    llm_cache_enabled: bool = Field(default=True, description="Habilitar caché de respuestas LLM")
     
     enable_rate_limit: bool = Field(default=True, description="Habilitar rate limiting")
     rate_limit_requests: int = Field(
-        default=100,
+        default=500,
         ge=1,
         description="Peticiones permitidas por ventana"
     )
