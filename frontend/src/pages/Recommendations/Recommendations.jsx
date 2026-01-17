@@ -51,35 +51,30 @@ function RecomendacionCard({ embalse, fechaRef }) {
       </div>
 
       <p className="text-sm text-gray-700 mb-3">
-        {recomendacion.recomendacion}
+        {recomendacion.motivo}
       </p>
 
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div>
           <span className="text-gray-600">Nivel mín. predicho:</span>
           <span className="ml-2 font-medium">
-            {formatNumber(recomendacion.nivel_min_predicho)} msnm
+            {formatNumber(recomendacion.nivel_predicho_min)} msnm
           </span>
         </div>
         <div>
           <span className="text-gray-600">Nivel máx. predicho:</span>
           <span className="ml-2 font-medium">
-            {formatNumber(recomendacion.nivel_max_predicho)} msnm
+            {formatNumber(recomendacion.nivel_predicho_max)} msnm
           </span>
         </div>
       </div>
 
-      {recomendacion.acciones && recomendacion.acciones.length > 0 && (
+      {recomendacion.accion_recomendada && (
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-2">Acciones recomendadas:</p>
-          <ul className="space-y-1">
-            {recomendacion.acciones.map((accion, index) => (
-              <li key={index} className="text-sm text-gray-600 flex items-start">
-                <span className="mr-2">•</span>
-                <span>{accion}</span>
-              </li>
-            ))}
-          </ul>
+          <p className="text-sm font-medium text-gray-700 mb-1">Acción principal:</p>
+          <p className="text-sm text-gray-600 italic">
+            {recomendacion.accion_recomendada}
+          </p>
         </div>
       )}
     </div>

@@ -106,6 +106,7 @@ export const getRiesgoColor = (nivel) => {
     ALTO: 'danger',
     MODERADO: 'warning',
     BAJO: 'success',
+    SEQUIA: 'danger',
     'SEQUÍA': 'danger',
   }
   

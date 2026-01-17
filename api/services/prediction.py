@@ -1,6 +1,7 @@
 """
 Servicio de predicción de niveles de embalses usando modelo LSTM Seq2Seq.
 """
+import logging
 import numpy as np
 import pandas as pd
 import torch
@@ -10,6 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 from ..config import settings
 from ..data import data_loader
+
+logger = logging.getLogger(__name__)
 
 
 class LSTMSeq2Seq(torch.nn.Module):
@@ -200,12 +203,14 @@ class PredictionService:
         fecha_dt = pd.to_datetime(fecha)
         
         # Validar que la fecha tenga suficiente historial
+        # Si la fecha es demasiado temprana, usar la primera fecha válida
         min_fecha_valida = df_est['fecha'].min() + timedelta(days=self.lookback)
         if fecha_dt < min_fecha_valida:
-            raise ValueError(
-                f'Fecha {fecha} es demasiado temprana. '
-                f'Primera fecha válida: {min_fecha_valida.strftime("%Y-%m-%d")}'
+            logger.warning(
+                f'Fecha {fecha} es demasiado temprana para {codigo_saih}. '
+                f'Usando primera fecha válida: {min_fecha_valida.strftime("%Y-%m-%d")}'
             )
+            fecha_dt = min_fecha_valida
         
         # Construir ventanas para cada modo y ejecutar inferencia
         preds = {}

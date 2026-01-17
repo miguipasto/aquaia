@@ -13,6 +13,7 @@ import {
 import {
   LineChart,
   Line,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -20,6 +21,8 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
+  ReferenceArea,
+  ComposedChart,
 } from 'recharts'
 import useDateStore from '../../store/dateStore'
 import {
@@ -68,19 +71,21 @@ function EmbalseDetail() {
   })
 
   // Generar predicción
-  const { data: prediccion, isLoading: loadingPrediccion } = useQuery({
+  const { data: prediccion, isLoading: loadingPrediccion, error: errorPrediccion } = useQuery({
     queryKey: ['prediccion', codigoSaih, fechaInicio, horizonteDias],
     queryFn: () => generarPrediccion(codigoSaih, {
       fecha_inicio: fechaInicio,
       horizonte_dias: horizonteDias,
     }),
     enabled: !!fechaInicio,
+    retry: 1,
   })
 
   // Obtener recomendación
-  const { data: recomendacion, isLoading: loadingRecomendacion } = useQuery({
+  const { data: recomendacion, isLoading: loadingRecomendacion, error: errorRecomendacion } = useQuery({
     queryKey: ['recomendacion', codigoSaih, simulatedDate, horizonteDias],
     queryFn: () => getRecomendacion(codigoSaih, simulatedDate, horizonteDias),
+    retry: 1,
   })
 
   if (loadingActual || loadingHistorico) {
@@ -116,6 +121,7 @@ function EmbalseDetail() {
       chartData.push({
         fecha: punto.fecha,
         nivel_real: punto.nivel,
+        lluvia: punto.precipitacion,
         tipo: 'historico',
       })
     })
@@ -128,7 +134,7 @@ function EmbalseDetail() {
       if (existingPoint) {
         existingPoint.pred_hist = punto.pred_hist
         existingPoint.pred = punto.pred
-        if (showRealData && punto.nivel_real) {
+        if (showRealData && punto.nivel_real !== null) {
           existingPoint.nivel_real = punto.nivel_real
         }
         existingPoint.tipo = 'prediccion'
@@ -137,12 +143,20 @@ function EmbalseDetail() {
           fecha: punto.fecha,
           pred_hist: punto.pred_hist,
           pred: punto.pred,
-          nivel_real: showRealData ? punto.nivel_real : undefined,
+          nivel_real: (showRealData && punto.nivel_real !== null) ? punto.nivel_real : undefined,
           tipo: 'prediccion',
         })
       }
     })
   }
+
+  // Calcular MAE si se muestran los datos reales
+  const mae = showRealData && prediccion ? (() => {
+    const puntosConError = prediccion.predicciones.filter(p => p.nivel_real !== null && p.pred !== null)
+    if (puntosConError.length === 0) return null
+    const sumaError = puntosConError.reduce((acc, p) => acc + Math.abs(p.nivel_real - p.pred), 0)
+    return sumaError / puntosConError.length
+  })() : null
 
   const estadoColor = getEstadoColor(embalseActual.estado)
   const nivelRiesgo = recomendacion?.nivel_riesgo
@@ -243,7 +257,14 @@ function EmbalseDetail() {
       </div>
 
       {/* Recomendación operativa */}
-      {recomendacion && (
+      {errorRecomendacion && (
+        <Alert
+          type="warning"
+          title="Recomendación no disponible"
+          message={`No se pudo generar la recomendación para esta fecha. ${errorRecomendacion.response?.data?.detail || errorRecomendacion.message}`}
+        />
+      )}
+      {recomendacion && !errorRecomendacion && (
         <div className={`card border-l-4 border-${riesgoColor}-500`}>
           <div className="flex items-start space-x-4">
             <Activity className={`text-${riesgoColor}-500 flex-shrink-0`} size={24} />
@@ -256,19 +277,19 @@ function EmbalseDetail() {
                   {nivelRiesgo}
                 </span>
               </div>
-              <p className="text-gray-700 mb-3">{recomendacion.recomendacion}</p>
+              <p className="text-gray-700 mb-3">{recomendacion.motivo}</p>
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                 <div>
                   <span className="text-gray-600">Nivel mín. predicho:</span>
                   <span className="ml-2 font-medium">
-                    {formatNumber(recomendacion.nivel_min_predicho)} msnm
+                    {formatNumber(recomendacion.nivel_predicho_min)} msnm
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-600">Nivel máx. predicho:</span>
                   <span className="ml-2 font-medium">
-                    {formatNumber(recomendacion.nivel_max_predicho)} msnm
+                    {formatNumber(recomendacion.nivel_predicho_max)} msnm
                   </span>
                 </div>
                 <div>
@@ -276,6 +297,13 @@ function EmbalseDetail() {
                   <span className="ml-2 font-medium">{recomendacion.horizonte_dias}</span>
                 </div>
               </div>
+              
+              {recomendacion.accion_recomendada && (
+                <div className="mt-4 p-3 bg-white/50 rounded border border-gray-100 italic text-sm text-gray-800">
+                  <span className="font-semibold not-italic text-gray-900 mr-2">Acción:</span>
+                  {recomendacion.accion_recomendada}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -326,74 +354,200 @@ function EmbalseDetail() {
           Evolución y Predicción del Nivel
         </h3>
         
+        {errorPrediccion && (
+          <Alert
+            type="warning"
+            title="Predicción no disponible"
+            message={`No se pudo generar la predicción para esta fecha. ${errorPrediccion.response?.data?.detail || errorPrediccion.message}`}
+          />
+        )}
+        
         {loadingPrediccion ? (
           <div className="flex items-center justify-center h-96">
             <LoadingSpinner />
           </div>
-        ) : (
+        ) : !errorPrediccion && (
           <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
+              <ComposedChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="fecha" 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 11 }}
                   angle={-45}
                   textAnchor="end"
                   height={80}
+                  stroke="#9ca3af"
                 />
                 <YAxis 
-                  label={{ value: 'Nivel (msnm)', angle: -90, position: 'insideLeft' }}
+                  yAxisId="left"
+                  stroke="#2563eb"
+                  tick={{ fontSize: 12 }}
+                  domain={['auto', 'auto']}
+                  label={{ value: 'Nivel (msnm)', angle: -90, position: 'insideLeft', style: { fill: '#2563eb', fontWeight: 600 } }}
                 />
-                <Tooltip />
-                <Legend />
+                <YAxis 
+                  yAxisId="right"
+                  orientation="right"
+                  stroke="#0ea5e9"
+                  tick={{ fontSize: 12 }}
+                  label={{ value: 'Lluvia (mm)', angle: 90, position: 'insideRight', style: { fill: '#0ea5e9', fontWeight: 600 } }}
+                />
                 
-                {/* Línea de fecha actual/simulada */}
+                <Tooltip 
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white p-4 border border-gray-200 shadow-xl rounded-lg">
+                          <p className="font-bold text-gray-700 mb-2">{formatDate(label)}</p>
+                          <div className="space-y-1">
+                            {payload.map((entry, index) => {
+                              const isRain = entry.dataKey === 'lluvia'
+                              const unit = isRain ? 'mm' : 'msnm'
+                              return (
+                                <div key={index} className="flex justify-between items-center gap-4">
+                                  <div className="flex items-center">
+                                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: entry.color }} />
+                                    <span className="text-xs font-medium text-gray-600">
+                                      {entry.name}:
+                                    </span>
+                                  </div>
+                                  <span className="text-xs font-bold text-gray-900">
+                                    {formatNumber(entry.value)} {unit}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
+                <Legend verticalAlign="top" height={36}/>
+                
+                {/* Zona de Predicción (Futuro) */}
+                {simulatedDate && (
+                  <ReferenceArea 
+                    x1={simulatedDate} 
+                    x2={chartData[chartData.length - 1]?.fecha} 
+                    yAxisId="left"
+                    fill="#f8fafc" 
+                    fillOpacity={0.5} 
+                  />
+                )}
+
+                {/* Línea de hoy */}
                 {simulatedDate && (
                   <ReferenceLine 
                     x={simulatedDate} 
-                    stroke="#ff6b6b" 
-                    strokeDasharray="5 5"
-                    label="Fecha actual"
+                    stroke="#ef4444" 
+                    strokeWidth={2}
+                    strokeDasharray="3 3"
+                    label={{ 
+                      value: 'Hoy', 
+                      position: 'top', 
+                      fill: '#ef4444',
+                      fontSize: 12,
+                      fontWeight: 'bold'
+                    }}
+                    yAxisId="left"
                   />
                 )}
                 
+                {/* Lluvia (Barras) */}
+                <Bar
+                  yAxisId="right"
+                  dataKey="lluvia"
+                  fill="#0ea5e9"
+                  name="Precipitación"
+                  barSize={10}
+                  opacity={0.3}
+                />
+
                 {/* Líneas del gráfico */}
                 <Line
+                  yAxisId="left"
                   type="monotone"
                   dataKey="nivel_real"
                   stroke="#2563eb"
-                  strokeWidth={2}
+                  strokeWidth={3}
                   dot={false}
                   name="Nivel real"
+                  animationDuration={1500}
                 />
                 <Line
+                  yAxisId="left"
                   type="monotone"
                   dataKey="pred_hist"
                   stroke="#f59e0b"
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   dot={false}
-                  name="Predicción (solo histórico)"
+                  name="Modelo Base (Solo hist.)"
                 />
                 <Line
+                  yAxisId="left"
                   type="monotone"
                   dataKey="pred"
                   stroke="#10b981"
-                  strokeWidth={2}
+                  strokeWidth={3}
                   dot={false}
-                  name="Predicción (con meteorología)"
+                  name="Modelo Avanzado (AEMET)"
+                  animationDuration={2000}
                 />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {showRealData && (
-          <Alert
-            type="info"
-            message="Se están mostrando los datos reales para comparar con las predicciones. En un escenario real, estos datos no estarían disponibles."
-          />
+          <div className="mt-6 border-t pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="flex items-center space-x-2 text-blue-700 mb-2">
+                  <Activity size={20} />
+                  <h4 className="font-semibold">Métricas de Validación</h4>
+                </div>
+                <div className="flex items-baseline space-x-3">
+                  <span className="text-3xl font-bold text-blue-900">
+                    {mae ? formatNumber(mae) : '--'}
+                  </span>
+                  <span className="text-sm text-blue-700 font-medium">
+                    MAE (Error Absoluto Medio) en msnm
+                  </span>
+                </div>
+                <p className="text-xs text-blue-600 mt-2">
+                  * Calculado dinámicamente comparando la predicción con los datos reales observados en el periodo de validación.
+                </p>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center space-x-2 text-green-700 mb-2">
+                  <TrendingUp size={20} />
+                  <h4 className="font-semibold">Insight del Modelo</h4>
+                </div>
+                <p className="text-sm text-green-800 italic">
+                  {mae === null ? 
+                    "No hay suficientes datos reales para calcular la precisión en este rango." :
+                    mae < 0.5 ? 
+                    "El modelo presenta una precisión excepcional para este embalse, permitiendo una toma de decisiones de alta confianza." :
+                    mae < 1.5 ? 
+                    "La precisión es adecuada para planificación operativa a medio plazo." :
+                    "Se observa una desviación mayor de lo habitual; se recomienda precaución en maniobras críticas basándose solo en la tendencia."
+                  }
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <Alert
+                type="info"
+                message="Se están mostrando los datos reales para comparar con las predicciones. En un escenario real, estos datos no estarían disponibles."
+              />
+            </div>
+          </div>
         )}
       </div>
 
