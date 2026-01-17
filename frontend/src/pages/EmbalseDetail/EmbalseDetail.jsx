@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   ArrowLeft, 
   TrendingUp, 
@@ -8,7 +8,10 @@ import {
   Calendar,
   Eye,
   EyeOff,
-  Activity
+  Activity,
+  RefreshCw,
+  ZoomIn,
+  ZoomOut
 } from 'lucide-react'
 import {
   LineChart,
@@ -23,6 +26,7 @@ import {
   ReferenceLine,
   ReferenceArea,
   ComposedChart,
+  Brush,
 } from 'recharts'
 import useDateStore from '../../store/dateStore'
 import {
@@ -33,6 +37,7 @@ import {
 } from '../../services/dashboardService'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import Alert from '../../components/Alert/Alert'
+import FuenteBadge from '../../components/FuenteBadge/FuenteBadge'
 import {
   formatNumber,
   formatPercentage,
@@ -47,9 +52,20 @@ function EmbalseDetail() {
   const { codigoSaih } = useParams()
   const navigate = useNavigate()
   const { simulatedDate } = useDateStore()
+  const queryClient = useQueryClient()
   
   const [showRealData, setShowRealData] = useState(false)
   const [horizonteDias, setHorizonteDias] = useState(90)
+  
+  // Estados para zoom y visualización
+  const [zoomDomain, setZoomDomain] = useState(null)
+  const [visibleSeries, setVisibleSeries] = useState({
+    nivel_real: true,
+    pred_hist: true,
+    pred: true,
+    lluvia: true
+  })
+  const [chartHeight, setChartHeight] = useState(400)
 
   // Calcular fecha de inicio para predicción (la fecha simulada actual o hoy)
   const fechaInicio = simulatedDate || format(new Date(), 'yyyy-MM-dd')
@@ -82,11 +98,36 @@ function EmbalseDetail() {
   })
 
   // Obtener recomendación
-  const { data: recomendacion, isLoading: loadingRecomendacion, error: errorRecomendacion } = useQuery({
+  const { data: recomendacion, isLoading: loadingRecomendacion, error: errorRecomendacion, refetch: refetchRecomendacion } = useQuery({
     queryKey: ['recomendacion', codigoSaih, simulatedDate, horizonteDias],
     queryFn: () => getRecomendacion(codigoSaih, simulatedDate, horizonteDias),
     retry: 1,
+    refetchInterval: (data) => {
+      // Si la fuente no es 'llm' y existe, refetch cada 10 segundos para obtener versión con IA
+      if (data && data.fuente_recomendacion !== 'llm') {
+        return 10000
+      }
+      return false
+    }
   })
+
+  // Funciones para manejar zoom
+  const handleZoom = (e) => {
+    if (e && e.activeLabel) {
+      setZoomDomain({ start: e.activeLabel })
+    }
+  }
+
+  const resetZoom = () => {
+    setZoomDomain(null)
+  }
+
+  const toggleSeries = (series) => {
+    setVisibleSeries(prev => ({
+      ...prev,
+      [series]: !prev[series]
+    }))
+  }
 
   if (loadingActual || loadingHistorico) {
     return (
@@ -265,7 +306,17 @@ function EmbalseDetail() {
         />
       )}
       {recomendacion && !errorRecomendacion && (
-        <div className={`card border-l-4 border-${riesgoColor}-500`}>
+        <div className={`card border-l-4 border-${riesgoColor}-500 relative`}>
+          {/* Indicador de procesamiento en background */}
+          {recomendacion.fuente_recomendacion !== 'llm' && recomendacion.fuente_recomendacion !== 'plantilla' && (
+            <div className="absolute top-3 right-3">
+              <div className="flex items-center space-x-1 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                <RefreshCw size={12} className="animate-spin" />
+                <span>Mejorando con IA...</span>
+              </div>
+            </div>
+          )}
+          
           <div className="flex items-start space-x-4">
             <Activity className={`text-${riesgoColor}-500 flex-shrink-0`} size={24} />
             <div className="flex-1">
@@ -276,6 +327,11 @@ function EmbalseDetail() {
                 <span className={`badge badge-${riesgoColor}`}>
                   {nivelRiesgo}
                 </span>
+                <FuenteBadge 
+                  fuente={recomendacion.fuente_recomendacion}
+                  generadoPorLlm={recomendacion.generado_por_llm}
+                  showLabel={true}
+                />
               </div>
               <p className="text-gray-700 mb-3">{recomendacion.motivo}</p>
               
@@ -299,9 +355,13 @@ function EmbalseDetail() {
               </div>
               
               {recomendacion.accion_recomendada && (
-                <div className="mt-4 p-3 bg-white/50 rounded border border-gray-100 italic text-sm text-gray-800">
-                  <span className="font-semibold not-italic text-gray-900 mr-2">Acción:</span>
-                  {recomendacion.accion_recomendada}
+                <div className="mt-4 p-3 bg-white/50 rounded border border-gray-100">
+                  <span className="font-semibold text-gray-900 block mb-2">Acciones recomendadas:</span>
+                  <div 
+                    className="text-sm text-gray-800 prose prose-sm max-w-none"
+                    style={{ listStylePosition: 'inside' }}
+                    dangerouslySetInnerHTML={{ __html: recomendacion.accion_recomendada }}
+                  />
                 </div>
               )}
             </div>
@@ -311,7 +371,10 @@ function EmbalseDetail() {
 
       {/* Controles del gráfico */}
       <div className="card">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Controles del Gráfico</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Horizonte de predicción */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Horizonte de Predicción
@@ -319,7 +382,7 @@ function EmbalseDetail() {
             <select
               value={horizonteDias}
               onChange={(e) => setHorizonteDias(Number(e.target.value))}
-              className="input w-48"
+              className="input"
             >
               <option value={30}>30 días</option>
               <option value={60}>60 días</option>
@@ -329,30 +392,117 @@ function EmbalseDetail() {
             </select>
           </div>
 
-          <button
-            onClick={() => setShowRealData(!showRealData)}
-            className={`btn ${showRealData ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            {showRealData ? (
-              <>
-                <EyeOff size={18} className="mr-2" />
-                Ocultar datos reales
-              </>
-            ) : (
-              <>
-                <Eye size={18} className="mr-2" />
-                Mostrar lo que pasó realmente
-              </>
-            )}
-          </button>
+          {/* Altura del gráfico */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Altura del Gráfico
+            </label>
+            <select
+              value={chartHeight}
+              onChange={(e) => setChartHeight(Number(e.target.value))}
+              className="input"
+            >
+              <option value={300}>Pequeño (300px)</option>
+              <option value={400}>Normal (400px)</option>
+              <option value={500}>Grande (500px)</option>
+              <option value={600}>Extra Grande (600px)</option>
+            </select>
+          </div>
+
+          {/* Botones de acción */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Opciones de Vista
+            </label>
+            <div className="flex items-center space-x-2 h-[42px]">
+              <button
+                onClick={() => setShowRealData(!showRealData)}
+                className={`btn h-full flex-1 flex items-center justify-center ${showRealData ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                {showRealData ? (
+                  <>
+                    <EyeOff size={18} className="mr-2" />
+                    Ocultar reales
+                  </>
+                ) : (
+                  <>
+                    <Eye size={18} className="mr-2" />
+                    Ver reales
+                  </>
+                )}
+              </button>
+              
+              {zoomDomain && (
+                <button
+                  onClick={resetZoom}
+                  className="btn btn-secondary h-full px-3 flex items-center justify-center"
+                  title="Resetear Zoom"
+                >
+                  <RefreshCw size={18} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Controles de series */}
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <p className="text-sm font-medium text-gray-700 mb-2">Series Visibles:</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => toggleSeries('nivel_real')}
+              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                visibleSeries.nivel_real
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              📊 Nivel Real
+            </button>
+            <button
+              onClick={() => toggleSeries('pred_hist')}
+              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                visibleSeries.pred_hist
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              📈 Modelo Base
+            </button>
+            <button
+              onClick={() => toggleSeries('pred')}
+              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                visibleSeries.pred
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              🎯 Modelo Avanzado
+            </button>
+            <button
+              onClick={() => toggleSeries('lluvia')}
+              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                visibleSeries.lluvia
+                  ? 'bg-cyan-500 text-white'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              🌧️ Precipitación
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Gráfico de predicción */}
       <div className="card">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Evolución y Predicción del Nivel
-        </h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Evolución y Predicción del Nivel
+          </h3>
+          <div className="text-xs text-gray-500">
+            💡 Tip: Arrastra para seleccionar área y hacer zoom
+          </div>
+        </div>
         
         {errorPrediccion && (
           <Alert
@@ -367,9 +517,12 @@ function EmbalseDetail() {
             <LoadingSpinner />
           </div>
         ) : !errorPrediccion && (
-          <div className="h-96">
+          <div style={{ height: `${chartHeight}px` }}>
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData}>
+              <ComposedChart 
+                data={chartData}
+                onMouseDown={handleZoom}
+              >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="fecha" 
@@ -378,6 +531,7 @@ function EmbalseDetail() {
                   textAnchor="end"
                   height={80}
                   stroke="#9ca3af"
+                  domain={zoomDomain ? [zoomDomain.start, 'dataMax'] : ['auto', 'auto']}
                 />
                 <YAxis 
                   yAxisId="left"
@@ -457,45 +611,62 @@ function EmbalseDetail() {
                 )}
                 
                 {/* Lluvia (Barras) */}
-                <Bar
-                  yAxisId="right"
-                  dataKey="lluvia"
-                  fill="#0ea5e9"
-                  name="Precipitación"
-                  barSize={10}
-                  opacity={0.3}
-                />
+                {visibleSeries.lluvia && (
+                  <Bar
+                    yAxisId="right"
+                    dataKey="lluvia"
+                    fill="#0ea5e9"
+                    name="Precipitación"
+                    barSize={10}
+                    opacity={0.3}
+                  />
+                )}
 
                 {/* Líneas del gráfico */}
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="nivel_real"
-                  stroke="#2563eb"
-                  strokeWidth={3}
-                  dot={false}
-                  name="Nivel real"
-                  animationDuration={1500}
-                />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="pred_hist"
-                  stroke="#f59e0b"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  name="Modelo Base (Solo hist.)"
-                />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="pred"
-                  stroke="#10b981"
-                  strokeWidth={3}
-                  dot={false}
-                  name="Modelo Avanzado (AEMET)"
-                  animationDuration={2000}
+                {visibleSeries.nivel_real && (
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="nivel_real"
+                    stroke="#2563eb"
+                    strokeWidth={3}
+                    dot={false}
+                    name="Nivel real"
+                    animationDuration={1500}
+                  />
+                )}
+                {visibleSeries.pred_hist && (
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="pred_hist"
+                    stroke="#f59e0b"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name="Modelo Base (Solo hist.)"
+                  />
+                )}
+                {visibleSeries.pred && (
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="pred"
+                    stroke="#10b981"
+                    strokeWidth={3}
+                    dot={false}
+                    name="Modelo Avanzado (AEMET)"
+                    animationDuration={2000}
+                  />
+                )}
+                
+                {/* Brush para zoom interactivo */}
+                <Brush 
+                  dataKey="fecha" 
+                  height={30} 
+                  stroke="#8884d8"
+                  fill="#f0f4f8"
+                  travellerWidth={10}
                 />
               </ComposedChart>
             </ResponsiveContainer>

@@ -8,11 +8,12 @@ Proporciona APIs para:
 - Gestionar configuraciones de umbrales
 - Consultar estadísticas del sistema
 """
-from fastapi import APIRouter, HTTPException, Query, Path
+from fastapi import APIRouter, HTTPException, Query, Path, BackgroundTasks
 from typing import Optional, List
 from datetime import date, datetime
 import logging
 
+from ..config import settings
 from ..models_recomendaciones import (
     RecomendacionRequest,
     RecomendacionOperativaDTO,
@@ -38,6 +39,36 @@ router = APIRouter(
         500: {"description": "Error interno del servidor"}
     }
 )
+
+
+# =============================================================================
+# FUNCIONES AUXILIARES PARA BACKGROUND TASKS
+# =============================================================================
+
+async def generar_recomendacion_background_router(
+    codigo_saih: str, 
+    fecha_inicio: Optional[date], 
+    horizonte: Optional[int],
+    forzar: bool
+):
+    """
+    Genera una recomendación con IA en segundo plano desde el router.
+    No bloquea la respuesta de la API.
+    """
+    try:
+        logger.info(f"[BACKGROUND] Starting AI recommendation generation for {codigo_saih}")
+        recomendacion_dto = await recomendacion_service.evaluar_riesgo_embalse(
+            codigo_saih=codigo_saih,
+            fecha_inicio=fecha_inicio,
+            horizonte=horizonte,
+            forzar_regeneracion=forzar
+        )
+        logger.info(
+            f"[BACKGROUND] AI recommendation generated for {codigo_saih}: "
+            f"{recomendacion_dto.fuente_recomendacion} - {recomendacion_dto.nivel_riesgo.value}"
+        )
+    except Exception as e:
+        logger.error(f"[BACKGROUND] Error generating AI recommendation for {codigo_saih}: {e}")
 
 
 # =============================================================================
@@ -72,26 +103,12 @@ async def obtener_recomendacion_embalse(
     codigo_saih: str = Path(..., description="Código SAIH del embalse (ej: E001)"),
     fecha_inicio: Optional[str] = Query(None, description="Fecha de inicio para simulación (YYYY-MM-DD). Si no se especifica, usa la fecha actual del sistema."),
     horizonte_dias: Optional[int] = Query(None, ge=1, le=180, description="Horizonte de predicción en días. Si es None, usa la configuración del embalse (defecto: 7)."),
-    forzar_regeneracion: bool = Query(False, description="Si True, regenera la recomendación aunque exista una reciente en caché.")
+    forzar_regeneracion: bool = Query(False, description="Si True, regenera la recomendación aunque exista una reciente en caché."),
+    background_tasks: BackgroundTasks = BackgroundTasks()
 ):
-    """
-    Genera o recupera recomendación operativa para un embalse.
-    
-    Permite simular recomendaciones para diferentes fechas, útil para análisis
-    históricos y dashboards interactivos.
-    
-    Args:
-        codigo_saih: Código SAIH del embalse
-        fecha_inicio: Fecha de inicio para simulación (opcional, usa hoy si no se especifica)
-        horizonte_dias: Horizonte de predicción opcional
-        forzar_regeneracion: Forzar nueva generación
-        
-    Returns:
-        RecomendacionOperativaDTO con la evaluación completa
-    """
+    """Genera o recupera recomendación operativa para un embalse."""
     try:
         # Convertir fecha_inicio de string a date
-        # Si no se proporciona, se usará None y el servicio usará date.today()
         fecha_inicio_date = None
         if fecha_inicio:
             try:
@@ -102,12 +119,49 @@ async def obtener_recomendacion_embalse(
                     detail=f"Formato de fecha inválido: {fecha_inicio}. Use YYYY-MM-DD"
                 )
         
-        recomendacion = recomendacion_service.evaluar_riesgo_embalse(
-            codigo_saih=codigo_saih,
-            fecha_inicio=fecha_inicio_date,
-            horizonte=horizonte_dias,
-            forzar_regeneracion=forzar_regeneracion
+        # Si no se fuerza regeneración, intentar obtener de BD (rápido)
+        if not forzar_regeneracion:
+            recomendacion_existente = recomendacion_service._obtener_recomendacion_reciente(
+                codigo_saih, fecha_inicio_date, horizonte_dias
+            )
+            if recomendacion_existente:
+                logger.info(f"Cached recommendation for {codigo_saih}")
+                return recomendacion_existente
+        
+        # Si la IA está deshabilitada, generar síncrono (es rápido sin LLM)
+        if not settings.enable_llm_recomendaciones:
+            logger.info(f"Generating recommendation without AI for {codigo_saih}")
+            recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
+                codigo_saih=codigo_saih,
+                fecha_inicio=fecha_inicio_date,
+                horizonte=horizonte_dias,
+                forzar_regeneracion=forzar_regeneracion
+            )
+            return recomendacion
+        
+        # Si la IA está habilitada, generar en background
+        logger.info(f"Scheduling AI recommendation in background for {codigo_saih}")
+        background_tasks.add_task(
+            generar_recomendacion_background_router,
+            codigo_saih,
+            fecha_inicio_date,
+            horizonte_dias,
+            forzar_regeneracion
         )
+        
+        # Devolver recomendación básica inmediata (sin IA, rápido)
+        # Deshabilitamos temporalmente la IA para esta llamada
+        enable_llm_original = settings.enable_llm_recomendaciones
+        settings.enable_llm_recomendaciones = False
+        try:
+            recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
+                codigo_saih=codigo_saih,
+                fecha_inicio=fecha_inicio_date,
+                horizonte=horizonte_dias,
+                forzar_regeneracion=True
+            )
+        finally:
+            settings.enable_llm_recomendaciones = enable_llm_original
         
         return recomendacion
         
@@ -139,10 +193,14 @@ async def obtener_recomendacion_embalse(
 )
 async def generar_recomendacion_embalse(
     codigo_saih: str = Path(..., description="Código SAIH del embalse"),
-    request: RecomendacionRequest = RecomendacionRequest()
+    request: RecomendacionRequest = RecomendacionRequest(),
+    background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     """
     Fuerza la generación de una nueva recomendación.
+    
+    Si la IA está habilitada, genera una versión rápida sin IA primero,
+    y programa la versión con IA en segundo plano.
     
     Útil para simulaciones y análisis interactivos en el dashboard.
     """
@@ -158,11 +216,38 @@ async def generar_recomendacion_embalse(
                     detail=f"Formato de fecha inválido: {request.fecha_inicio}. Use YYYY-MM-DD"
                 )
         
-        recomendacion = recomendacion_service.evaluar_riesgo_embalse(
+        # Si la IA está habilitada, generar en background
+        if settings.enable_llm_recomendaciones:
+            logger.info(f"Scheduling AI recommendation in background for {codigo_saih}")
+            background_tasks.add_task(
+                generar_recomendacion_background_router,
+                codigo_saih,
+                fecha_inicio_date,
+                request.horizonte_dias,
+                True  # Siempre forzar en POST
+            )
+            
+            # Generar versión rápida sin IA
+            enable_llm_original = settings.enable_llm_recomendaciones
+            settings.enable_llm_recomendaciones = False
+            try:
+                recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
+                    codigo_saih=codigo_saih,
+                    fecha_inicio=fecha_inicio_date,
+                    horizonte=request.horizonte_dias,
+                    forzar_regeneracion=True
+                )
+            finally:
+                settings.enable_llm_recomendaciones = enable_llm_original
+            
+            return recomendacion
+        
+        # Si no hay IA, generar normal (es rápido)
+        recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
             codigo_saih=codigo_saih,
             fecha_inicio=fecha_inicio_date,
             horizonte=request.horizonte_dias,
-            forzar_regeneracion=True  # Siempre forzar en POST
+            forzar_regeneracion=True
         )
         
         return recomendacion
@@ -588,3 +673,152 @@ async def listar_tipos_riesgo():
     except Exception as e:
         logger.error(f"Error obteniendo tipos de riesgo: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# ENDPOINTS DE LLM (Ollama)
+# =============================================================================
+
+@router.get(
+    "/llm/salud",
+    summary="Verificar estado del servicio LLM (Ollama)",
+    description="""
+    Verifica que el servicio Ollama esté disponible y el modelo configurado esté cargado.
+    
+    **Retorna:**
+    - `disponible`: Si Ollama está accesible
+    - `modelo_configurado`: Nombre del modelo configurado
+    - `modelo_disponible`: Si el modelo está instalado
+    - `modelos_instalados`: Lista de modelos disponibles
+    """
+)
+async def verificar_salud_llm():
+    """Verifica el estado del servicio Ollama."""
+    try:
+        from ..services.llm_service import llm_service
+        resultado = await llm_service.verificar_salud_ollama()
+        return resultado
+    except Exception as e:
+        logger.error(f"Error verificando salud LLM: {e}")
+        return {
+            'disponible': False,
+            'error': str(e)
+        }
+
+
+@router.get(
+    "/llm/estadisticas",
+    summary="Obtener estadísticas de uso del LLM",
+    description="""
+    Muestra estadísticas sobre el uso del servicio LLM:
+    - Total de peticiones
+    - Cache hits/misses
+    - Tasa de éxito del LLM
+    - Errores
+    """
+)
+async def obtener_estadisticas_llm():
+    """Retorna estadísticas de uso del servicio LLM."""
+    try:
+        from ..services.llm_service import llm_service
+        from ..services.llm_service import llm_service
+        stats = llm_service.get_stats()
+        
+        # Obtener también estadísticas de BD con fallback a query simple
+        cache_stats = []
+        
+        try:
+            # Intentar usar la vista optimizada
+            query = "SELECT * FROM v_llm_cache_stats"
+            with recomendacion_service.db.get_cursor() as cursor:
+                cursor.execute(query)
+                results = cursor.fetchall()
+                cache_stats = [dict(row) for row in results]
+        except Exception as e:
+            logger.warning(f"No se pudo usar v_llm_cache_stats: {e}")
+            # Fallback: query directa a la tabla
+            try:
+                query_fallback = """
+                    SELECT 
+                        nivel_riesgo,
+                        COUNT(*) as total_entradas,
+                        COALESCE(SUM(hits), 0) as total_hits,
+                        COALESCE(AVG(hits), 0) as hits_promedio,
+                        MAX(fecha_cache) as ultima_actualizacion,
+                        COUNT(CASE WHEN fecha_cache > NOW() - INTERVAL '24 hours' THEN 1 END) as entradas_recientes
+                    FROM llm_cache_recomendaciones
+                    GROUP BY nivel_riesgo
+                """
+                with recomendacion_service.db.get_cursor() as cursor:
+                    cursor.execute(query_fallback)
+                    results = cursor.fetchall()
+                    cache_stats = [dict(row) for row in results]
+            except Exception as e2:
+                logger.warning(f"Tampoco se pudo acceder a la tabla directamente: {e2}")
+                cache_stats = []
+        
+        return {
+            'servicio': stats,
+            'cache_bd': cache_stats,
+            'configuracion': {
+                'habilitado': settings.enable_llm_recomendaciones,
+                'modelo': settings.ollama_model,
+                'url': settings.ollama_url,
+                'timeout': settings.ollama_timeout,
+                'cache_ttl_horas': settings.llm_cache_ttl / 3600
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas LLM: {e}")
+        # En lugar de fallar completamente, devolver lo que podamos
+        try:
+            from ..services.llm_service import llm_service
+            return {
+                'servicio': llm_service.get_stats(),
+                'cache_bd': [],
+                'configuracion': {
+                    'habilitado': settings.enable_llm_recomendaciones,
+                    'modelo': settings.ollama_model,
+                    'url': settings.ollama_url,
+                    'timeout': settings.ollama_timeout,
+                    'cache_ttl_horas': settings.llm_cache_ttl / 3600
+                },
+                'error': str(e)
+            }
+        except:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post(
+    "/llm/limpiar-cache",
+    summary="Limpiar caché antiguo del LLM",
+    description="""
+    Elimina entradas antiguas del caché de respuestas LLM.
+    
+    **Parámetro:**
+    - `dias_antiguedad`: Eliminar entradas más antiguas que estos días (default: 30)
+    """
+)
+async def limpiar_cache_llm(
+    dias_antiguedad: int = Query(30, ge=1, le=365, description="Días de antigüedad para limpiar")
+):
+    """Limpia el caché antiguo del LLM."""
+    try:
+        query = "SELECT limpiar_cache_llm_antiguo(%s)"
+        
+        with recomendacion_service.db.get_cursor() as cursor:
+            cursor.execute(query, (dias_antiguedad,))
+            result = cursor.fetchone()
+            filas_eliminadas = result['limpiar_cache_llm_antiguo'] if result else 0
+            
+            return {
+                'success': True,
+                'filas_eliminadas': filas_eliminadas,
+                'dias_antiguedad': dias_antiguedad
+            }
+            
+    except Exception as e:
+        logger.error(f"Error limpiando caché LLM: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
