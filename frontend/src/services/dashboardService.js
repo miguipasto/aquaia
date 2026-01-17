@@ -100,3 +100,29 @@ export const getDemarcaciones = async () => {
   const response = await api.get('/demarcaciones')
   return response.data
 }
+
+/**
+ * Verifica el estado del servicio LLM (Ollama)
+ */
+export const getLLMSalud = async () => {
+  const response = await api.get('/recomendaciones/llm/salud')
+  return response.data
+}
+
+/**
+ * Obtiene estadísticas de uso del LLM
+ */
+export const getLLMEstadisticas = async () => {
+  const response = await api.get('/recomendaciones/llm/estadisticas')
+  return response.data
+}
+
+/**
+ * Genera recomendación forzada (ignora caché)
+ * @param {string} codigoSaih - Código del embalse
+ * @param {Object} data - Datos opcionales (fecha_inicio, horizonte_dias)
+ */
+export const generarRecomendacionForzada = async (codigoSaih, data = {}) => {
+  const response = await api.post(`/recomendaciones/${codigoSaih}`, data)
+  return response.data
+}
