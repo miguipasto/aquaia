@@ -120,7 +120,7 @@ class RiskService:
         elif prob_bajo > 0.30:
             categoria = "ALTO"
             mensaje = (
-                f"⚠️ ALERTA: Alta probabilidad ({prob_bajo*100:.1f}%) de niveles por debajo del umbral mínimo "
+                f"ALERTA: Alta probabilidad ({prob_bajo*100:.1f}%) de niveles por debajo del umbral mínimo "
                 f"({umbral_minimo:.1f} hm³). Se recomienda aumentar aportes o reducir desembalses. "
                 f"Nivel mínimo esperado: {nivel_min:.1f} hm³."
             )
@@ -128,7 +128,7 @@ class RiskService:
         elif prob_alto > 0.30:
             categoria = "ALTO"
             mensaje = (
-                f"⚠️ ALERTA: Alta probabilidad ({prob_alto*100:.1f}%) de niveles por encima del umbral máximo "
+                f"ALERTA: Alta probabilidad ({prob_alto*100:.1f}%) de niveles por encima del umbral máximo "
                 f"({umbral_maximo:.1f} hm³). Se recomienda aumentar desembalses preventivos. "
                 f"Nivel máximo esperado: {nivel_max:.1f} hm³."
             )

@@ -1,7 +1,7 @@
 """
 API REST para predicción de niveles de embalses usando LSTM Seq2Seq.
 """
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import List, Optional
@@ -33,14 +33,15 @@ from .models import (
 )
 from .data import data_loader, db_connection
 from .services import prediction_service, risk_service
+from .services.recomendacion import recomendacion_service
 from .routers import recomendaciones as recomendaciones_router
 from .routers import dashboard as dashboard_router
 from .middleware import SecurityMiddleware, RateLimitMiddleware, cache_response
 from .middleware.cache import get_cache_stats, clear_cache
 
-# Configurar logging
+# Configurar logging según settings
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, settings.log_level.upper(), logging.INFO),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -269,6 +270,31 @@ async def obtener_resumen(codigo_saih: str):
 
 
 # ============================================================================
+# FUNCIONES AUXILIARES PARA BACKGROUND TASKS
+# ============================================================================
+
+async def generar_recomendacion_background(codigo_saih: str, fecha_inicio: str, horizonte: int):
+    """
+    Genera una recomendación con IA en segundo plano (tarea asíncrona).
+    No bloquea la respuesta de la API.
+    """
+    try:
+        logger.info(f"[BACKGROUND] Starting recommendation generation for {codigo_saih}")
+        recomendacion_dto = await recomendacion_service.evaluar_riesgo_embalse(
+            codigo_saih=codigo_saih,
+            fecha_inicio=fecha_inicio,
+            horizonte=horizonte,
+            forzar_regeneracion=forzar
+        )
+        logger.info(
+            f"[BACKGROUND] Recommendation generated for {codigo_saih}: "
+            f"{recomendacion_dto.fuente_recomendacion} - {recomendacion_dto.nivel_riesgo.value}"
+        )
+    except Exception as e:
+        logger.error(f"[BACKGROUND] Error generating recommendation for {codigo_saih}: {e}")
+
+
+# ============================================================================
 # ENDPOINTS DE PREDICCIÓN
 # ============================================================================
 
@@ -281,7 +307,8 @@ async def obtener_resumen(codigo_saih: str):
 )
 async def generar_prediccion(
     codigo_saih: str,
-    request: PrediccionRequest
+    request: PrediccionRequest,
+    background_tasks: BackgroundTasks
 ):
     """Genera predicción de nivel para un embalse."""
     try:
@@ -309,6 +336,16 @@ async def generar_prediccion(
                 "nivel_real": float(row['nivel_real']) if not pd.isna(row['nivel_real']) else None
             })
         
+        # Generar recomendación en segundo plano (no bloqueante)
+        if settings.enable_llm_recomendaciones:
+            background_tasks.add_task(
+                generar_recomendacion_background,
+                codigo_saih,
+                request.fecha_inicio,
+                request.horizonte_dias
+            )
+            logger.info(f"Recommendation scheduled in background for {codigo_saih}")
+        
         return {
             "codigo_saih": codigo_saih,
             "fecha_inicio": request.fecha_inicio,
@@ -332,7 +369,7 @@ async def generar_prediccion(
     summary="Predicción rápida con parámetros por defecto",
     description="Genera una predicción usando la última fecha disponible y horizonte por defecto (90 días)"
 )
-async def prediccion_ultimo(codigo_saih: str):
+async def prediccion_ultimo(codigo_saih: str, background_tasks: BackgroundTasks):
     """Genera predicción con parámetros por defecto."""
     try:
         # Validar que el embalse existe
@@ -364,6 +401,16 @@ async def prediccion_ultimo(codigo_saih: str):
                 "pred": float(row['pred']),
                 "nivel_real": float(row['nivel_real']) if not pd.isna(row['nivel_real']) else None
             })
+        
+        # Generar recomendación en segundo plano (no bloqueante)
+        if settings.enable_llm_recomendaciones:
+            background_tasks.add_task(
+                generar_recomendacion_background,
+                codigo_saih,
+                fecha_inicio,
+                settings.default_prediction_horizon
+            )
+            logger.info(f"Recommendation scheduled in background for {codigo_saih}")
         
         return {
             "codigo_saih": codigo_saih,

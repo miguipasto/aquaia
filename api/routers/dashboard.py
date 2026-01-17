@@ -59,15 +59,7 @@ async def obtener_kpis_dashboard(
         description="Fecha de referencia para simular dashboard (YYYY-MM-DD). Si no se especifica, usa la última fecha disponible."
     )
 ):
-    """
-    Obtiene los KPIs agregados del sistema para el dashboard.
-    
-    Args:
-        fecha_referencia: Fecha opcional para simular datos históricos
-        
-    Returns:
-        DashboardKPIs con métricas agregadas del sistema
-    """
+    """Obtiene los KPIs agregados del sistema para el dashboard."""
     try:
         # Convertir fecha si se proporciona
         fecha_ref = None
