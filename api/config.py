@@ -97,44 +97,35 @@ class Settings(BaseSettings):
     
     enable_cache: bool = Field(default=True, description="Habilitar caché")
     cache_ttl: int = Field(default=3600, ge=10, description="TTL del caché (segundos)")
-    cache_max_size: int = Field(default=1000, ge=10, description="Tamaño máximo del caché")
+    cache_max_size: int = Field(default=1000, ge=10)
     
-    # Ollama para recomendaciones inteligentes
-    ollama_url: str = Field(default="http://localhost:11434", description="URL de la API de Ollama")
-    ollama_model: str = Field(default="phi3.5:latest", description="Modelo LLM a usar")
-    enable_llm_recomendaciones: bool = Field(default=False, description="Usar LLM para generar textos de recomendación")
-    ollama_timeout: int = Field(default=120, ge=10, le=300, description="Timeout para llamadas a Ollama (segundos)")
-    ollama_max_retries: int = Field(default=2, ge=0, le=5, description="Reintentos en caso de fallo")
-    ollama_temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Temperatura del modelo")
-    ollama_top_p: float = Field(default=0.9, ge=0.0, le=1.0, description="Top-p sampling")
-    llm_cache_ttl: int = Field(default=86400, ge=3600, description="TTL del caché de respuestas LLM (segundos)")
-    llm_cache_enabled: bool = Field(default=True, description="Habilitar caché de respuestas LLM")
+    report_model_version: str = Field(default="v1.0")
+    report_default_user: str = Field(default="Usuario")
     
-    enable_rate_limit: bool = Field(default=True, description="Habilitar rate limiting")
-    rate_limit_requests: int = Field(
-        default=500,
-        ge=1,
-        description="Peticiones permitidas por ventana"
-    )
-    rate_limit_window: int = Field(default=60, ge=1, description="Ventana de tiempo (segundos)")
+    ollama_url: str = Field(default="http://localhost:11434")
+    ollama_model: str = Field(default="phi3.5:latest")
+    enable_llm_recomendaciones: bool = Field(default=False)
+    ollama_timeout: int = Field(default=120, ge=10, le=300)
+    ollama_max_retries: int = Field(default=2, ge=0, le=5)
+    ollama_temperature: float = Field(default=0.7, ge=0.0, le=2.0)
+    ollama_top_p: float = Field(default=0.9, ge=0.0, le=1.0)
+    llm_cache_ttl: int = Field(default=86400, ge=3600)
+    llm_cache_enabled: bool = Field(default=True)
     
-    aemet_api_key: str = Field(default="", description="API Key de AEMET")
-    aemet_api_url: str = Field(
-        default="https://opendata.aemet.es/opendata/api",
-        description="URL base de la API de AEMET"
-    )
+    enable_rate_limit: bool = Field(default=True)
+    rate_limit_requests: int = Field(default=500, ge=1)
+    rate_limit_window: int = Field(default=60, ge=1)
     
-    enable_metrics: bool = Field(default=True, description="Habilitar métricas")
-    enable_tracing: bool = Field(default=False, description="Habilitar trazas")
-    sentry_dsn: str = Field(default="", description="Sentry DSN")
+    aemet_api_key: str = Field(default="")
+    aemet_api_url: str = Field(default="https://opendata.aemet.es/opendata/api")
     
-    backup_dir: str = Field(default="./backups", description="Directorio de backups")
-    enable_auto_backup: bool = Field(default=False, description="Habilitar backups automáticos")
-    backup_frequency_hours: int = Field(
-        default=24,
-        ge=1,
-        description="Frecuencia de backup (horas)"
-    )
+    enable_metrics: bool = Field(default=True)
+    enable_tracing: bool = Field(default=False)
+    sentry_dsn: str = Field(default="")
+    
+    backup_dir: str = Field(default="./backups")
+    enable_auto_backup: bool = Field(default=False)
+    backup_frequency_hours: int = Field(default=24, ge=1)
     
     @validator('log_level')
     def validate_log_level(cls, v):

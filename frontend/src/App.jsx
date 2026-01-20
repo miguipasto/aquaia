@@ -5,6 +5,8 @@ import Predictions from './pages/Predictions/Predictions'
 import Alerts from './pages/Alerts/Alerts'
 import Recommendations from './pages/Recommendations/Recommendations'
 import EmbalseDetail from './pages/EmbalseDetail/EmbalseDetail'
+import Informes from './pages/Informes/Informes'
+import ResultadosEvaluacion from './pages/ResultadosEvaluacion/ResultadosEvaluacion'
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/predicciones/:codigoSaih" element={<EmbalseDetail />} />
           <Route path="/alertas" element={<Alerts />} />
           <Route path="/recomendaciones" element={<Recommendations />} />
+          <Route path="/informes" element={<Informes />} />
+          <Route path="/evaluaciones/resultados" element={<ResultadosEvaluacion />} />
         </Routes>
       </Layout>
     </Router>

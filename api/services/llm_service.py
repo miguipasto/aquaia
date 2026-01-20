@@ -6,7 +6,7 @@ import asyncio
 import json
 import hashlib
 import logging
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 from datetime import datetime, timedelta
 import httpx
 
@@ -355,6 +355,161 @@ Formato de respuesta:
             logger.error(f"Error completo en generación LLM: {e}")
             raise
     
+    async def generar_analisis_informe_diario(
+        self,
+        datos_actual: Dict,
+        prediccion: Dict,
+        riesgos: Dict,
+        metricas: Dict
+    ) -> Dict:
+        """
+        Genera un análisis técnico profundo y recomendaciones específicas para el informe diario.
+        """
+        prompt_base = f"""Como ingeniero hidrológico jefe, analiza la situación operacional del embalse {datos_actual.get('nombre_embalse', 'seleccionado')}.
+
+ESTADO ACTUAL:
+- Nivel: {datos_actual.get('nivel_actual_msnm', 0):.2f} msnm
+- Llenado: {datos_actual.get('porcentaje_capacidad', 0):.1f}%
+- Capacidad Total: {datos_actual.get('capacidad_total', 0):.2f} hm³
+
+PREDICCIÓN CORTO PLAZO (48h - 30d):
+- Tendencia esperada: {prediccion.get('nivel_30d', 0):.2f} msnm a 30 días.
+- Riesgos detectados: {riesgos.get('mensaje', 'Sin riesgos significativos')}.
+
+TAREA:
+Genera un análisis técnico dividido en:
+1. Resumen Ejecutivo (conciso, profesional)
+2. Análisis de Situación (detalles técnicos, comparativa)
+3. Recomendaciones Operativas (formato HTML <ul><li>)
+
+Responde en Formato JSON:
+{{
+  "resumen": "...",
+  "situacion": "...",
+  "recomendaciones": "<ul><li>...</li></ul>"
+}}
+"""
+        try:
+            # Una sola consulta robusta para eficiencia, pero con instrucciones claras de profundidad
+            async with httpx.AsyncClient(timeout=45.0) as client:
+                response = await client.post(
+                    f"{settings.ollama_url}/api/generate",
+                    json={
+                        "model": settings.ollama_model,
+                        "prompt": prompt_base,
+                        "stream": False,
+                        "format": "json"
+                    }
+                )
+                
+                if response.status_code == 200:
+                    res_json = json.loads(response.json().get('response', '{}'))
+                    
+                    return {
+                        "resumen_ejecutivo": res_json.get('resumen', 'Situación estable.'),
+                        "analisis_situacion": res_json.get('situacion', 'Niveles dentro de la normalidad.'),
+                        "prediccion_48h": f"Tendencia hacia {prediccion.get('nivel_30d', 0):.2f} msnm.",
+                        "recomendaciones_html": res_json.get('recomendaciones', "<ul><li>Vigilancia estándar</li></ul>"),
+                        "evaluacion_riesgos": riesgos.get('mensaje', "Monitorización continua."),
+                        "llm_usado": True
+                    }
+            raise Exception("Fallo en respuesta de Ollama")
+            
+        except Exception as e:
+            logger.warning(f"Error en LLM diario avanzado: {e}")
+            # Fallback a la versión básica o estática
+            return {
+                "resumen_ejecutivo": "Análisis operativo basado en niveles actuales.",
+                "analisis_situacion": f"El embalse se encuentra al {datos_actual.get('porcentaje_capacidad', 0):.1f}%.",
+                "prediccion_48h": "Tendencia estable según modelos.",
+                "recomendaciones_html": "<ul><li>Mantener vigilancia rutinaria</li></ul>",
+                "evaluacion_riesgos": riesgos.get('mensaje', "Sin alertas."),
+                "llm_usado": False
+            }
+
+    async def generar_analisis_informe_semanal(
+        self,
+        datos_actual: Dict,
+        datos_historicos_semana: List,
+        prediccion: Dict,
+        riesgos: Dict,
+        escenarios: Dict,
+        metricas: Dict
+    ) -> Dict:
+        """
+        Genera un informe estratégico semanal con análisis de tendencias y escenarios.
+        """
+        prompt_base = f"""Eres el Director de Recursos Hídricos. Analiza el informe semanal del embalse {datos_actual.get('nombre_embalse', 'seleccionado')}.
+
+CONTEXTO SEMANAL:
+- Nivel Actual: {datos_actual.get('nivel_actual_msnm', 0):.2f} msnm ({datos_actual.get('porcentaje_capacidad', 0):.1f}% llenado)
+- Evolución 7 días: {len(datos_historicos_semana)} puntos de datos registrados.
+
+PROYECCIONES:
+- 30 días: {prediccion.get('nivel_30d', 0):.2f} msnm
+- 90 días: {prediccion.get('nivel_90d', 0):.2f} msnm
+- 180 días: {prediccion.get('nivel_180d', 0):.2f} msnm
+
+ESCENARIOS (180 días):
+- Pesimista: {escenarios.get('pesimista', {}).get('nivel_180d', 0):.2f} msnm
+- Optimista: {escenarios.get('optimista', {}).get('nivel_180d', 0):.2f} msnm
+
+CALIDAD MODELO:
+- MAE Global: {metricas.get('MAE_global', 0):.4f}
+- R2 Score: {metricas.get('R2_global', 0):.4f}
+
+TAREA:
+Genera un informe estratégico JSON con:
+1. resumen: Visión general estratégica.
+2. evolucion: Análisis de la tendencia de la última semana.
+3. escenarios: Evaluación técnica de los escenarios a largo plazo.
+4. recomendaciones: Acciones estratégicas (formato HTML <ul><li>).
+5. conclusiones: Trazabilidad y calidad de datos.
+
+Formato JSON:
+{{
+  "resumen": "...",
+  "evolucion": "...",
+  "escenarios": "...",
+  "recomendaciones": "<ul><li>...</li></ul>",
+  "conclusiones": "..."
+}}
+"""
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    f"{settings.ollama_url}/api/generate",
+                    json={
+                        "model": settings.ollama_model,
+                        "prompt": prompt_base,
+                        "stream": False,
+                        "format": "json"
+                    }
+                )
+                
+                if response.status_code == 200:
+                    res_json = json.loads(response.json().get('response', '{}'))
+                    
+                    return {
+                        "resumen_ejecutivo": res_json.get('resumen', 'Análisis estratégico semanal disponible.'),
+                        "evolucion_semanal": res_json.get('evolucion', 'Evolución estable en el periodo analizado.'),
+                        "analisis_escenarios": res_json.get('escenarios', 'Los escenarios muestran una variabilidad dentro de rangos históricos.'),
+                        "recomendaciones_estrategicas": res_json.get('recomendaciones', "<ul><li>Continuar planificación estacional</li></ul>"),
+                        "conclusiones_calidad": res_json.get('conclusiones', f"Validación técnica completada (R2: {metricas.get('R2_global', 0):.2f})."),
+                        "llm_usado": True
+                    }
+        except Exception as e:
+            logger.warning(f"Error en LLM semanal avanzado: {e}")
+            
+        return {
+            "resumen_ejecutivo": "Revisión estratégica del estado del embalse.",
+            "evolucion_semanal": "Tendencia observada consistente con el periodo anual.",
+            "analisis_escenarios": f"Diferencial entre escenarios de {abs(escenarios.get('optimista', {}).get('nivel_180d', 0) - escenarios.get('pesimista', {}).get('nivel_180d', 0)):.2f} msnm.",
+            "recomendaciones_estrategicas": "<ul><li>Optimizar desembalses según prioridad</li><li>Revisar planes de contingencia</li></ul>",
+            "conclusiones_calidad": f"Modelo validado con R2 de {metricas.get('R2_global', 0):.2f}.",
+            "llm_usado": False
+        }
+
     def get_stats(self) -> Dict:
         """Retorna estadísticas del servicio LLM."""
         total = self._stats['total_requests']

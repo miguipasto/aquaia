@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="{{ idioma }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Semanal - {{ nombre_embalse }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #ffffff;
+        }
+        
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+            background: white;
+        }
+        
+        /* PORTADA */
+        .portada {
+            text-align: center;
+            padding: 60px 20px;
+            border: 3px solid #2c3e50;
+            margin-bottom: 40px;
+            page-break-after: always;
+        }
+        
+        .portada h1 {
+            font-size: 28pt;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .portada h2 {
+            font-size: 22pt;
+            color: #34495e;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .portada-info {
+            font-size: 11pt;
+            margin: 10px 0;
+            color: #555;
+        }
+        
+        .portada-periodo {
+            font-size: 13pt;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .portada-footer {
+            margin-top: 40px;
+            font-size: 10pt;
+            color: #777;
+        }
+        
+        /* ENCABEZADO */
+        .header {
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .header h1 {
+            font-size: 24pt;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10pt;
+            color: #555;
+        }
+        
+        .header-info-item {
+            margin: 3px 0;
+        }
+        
+        .header-info-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        /* SECCIONES */
+        .seccion {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        
+        .seccion-titulo {
+            color: #2c3e50;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-size: 16pt;
+            font-weight: 700;
+        }
+        
+        .seccion-subtitulo {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 13pt;
+            font-weight: 600;
+        }
+        
+        /* RESUMEN EJECUTIVO */
+        .resumen-destacado {
+            background: #e8f4f8;
+            border: 2px solid #2c3e50;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .resumen-item {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+        
+        .resumen-label {
+            font-weight: 700;
+            color: #2c3e50;
+            display: inline-block;
+            min-width: 180px;
+        }
+        
+        .resumen-lista {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        /* GRÁFICAS */
+        .grafica-container {
+            width: 100%;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #eee;
+            padding: 10px;
+            background-color: #fcfcfc;
+        }
+        
+        .grafica-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .resumen-lista li {
+            margin: 8px 0;
+            padding-left: 15px;
+            border-left: 3px solid #34495e;
+        }
+        
+        /* INDICADORES */
+        .estado-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 9pt;
+            margin-left: 8px;
+        }
+        
+        .estado-normal {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .estado-precaucion {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .estado-alerta {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* TABLAS */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9pt;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        td {
+            color: #2c3e50;
+        }
+        
+        .tabla-centrada td, .tabla-centrada th {
+            text-align: center;
+        }
+        
+        .valor-destacado {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        /* EVOLUCIÓN SEMANAL */
+        .evolucion-box {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .evolucion-titulo {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        /* ALERTAS */
+        .alerta-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+        
+        .alerta-info {
+            background: #e7f3ff;
+            border-color: #0066cc;
+            color: #004085;
+        }
+        
+        .alerta-precaucion {
+            background: #fff9e6;
+            border-color: #cc8800;
+            color: #856404;
+        }
+        
+        .alerta-critica {
+            background: #ffe6e6;
+            border-color: #cc0000;
+            color: #721c24;
+        }
+        
+        .alerta-titulo {
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        
+        /* RECOMENDACIONES */
+        .recomendacion-box {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 4px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .recomendacion-numero {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 11pt;
+        }
+        
+        .recomendacion-accion {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 6px 0;
+        }
+        
+        .recomendacion-detalle {
+            margin: 4px 0;
+            color: #555;
+            font-size: 9pt;
+        }
+        
+        .recomendacion-label {
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        /* ESCENARIOS */
+        .escenario-box {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+        
+        .escenario-conservador {
+            border-color: #dc3545;
+        }
+        
+        .escenario-neutro {
+            border-color: #17a2b8;
+        }
+        
+        .escenario-agresivo {
+            border-color: #28a745;
+        }
+        
+        .escenario-titulo {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        /* MÉTRICAS */
+        .metricas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .metrica-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        .metrica-valor {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 8px 0;
+        }
+        
+        .metrica-label {
+            font-size: 9pt;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* ANÁLISIS LLM */
+        .analisis-llm {
+            background: #f0f4f8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border-left: 4px solid #5a67d8;
+        }
+        
+        .analisis-llm-titulo {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 11pt;
+        }
+        
+        .analisis-llm-contenido {
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .analisis-llm-contenido ul {
+            margin: 10px 0 10px 20px;
+        }
+        
+        .analisis-llm-contenido li {
+            margin: 6px 0;
+        }
+        
+        /* FOOTER */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+            font-size: 8pt;
+        }
+        
+        .footer-linea {
+            margin: 3px 0;
+        }
+        
+        /* PRINT */
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            .seccion {
+                page-break-inside: avoid;
+            }
+            .portada {
+                page-break-after: always;
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media screen and (max-width: 768px) {
+            .metricas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PORTADA -->
+        <div class="portada">
+            <h1>Informe Semanal de Gestión</h1>
+            <h2>{{ nombre_embalse }}</h2>
+            
+            {% if fecha_inicio_periodo and fecha_fin_periodo %}
+            <div class="portada-periodo">
+                Periodo: {{ fecha_inicio_periodo.strftime('%d/%m/%Y') }} - {{ fecha_fin_periodo.strftime('%d/%m/%Y') }}
+            </div>
+            {% endif %}
+            
+            <div class="portada-info">
+                <div style="margin-top: 25px;">
+                    <strong>Código Embalse:</strong> {{ embalse_id }}
+                </div>
+                <div>
+                    <strong>Fecha de Generación:</strong> {{ fecha_generacion.strftime('%d/%m/%Y %H:%M') }}
+                </div>
+                <div>
+                    <strong>Modelo:</strong> {{ model_version }}
+                </div>
+            </div>
+            
+            <div class="portada-footer">
+                <div><strong>Sistema de Gestión de Embalses AquaIA</strong></div>
+                <div>Confederación Hidrográfica | MITECO</div>
+            </div>
+        </div>
+
+        <!-- 1. RESUMEN EJECUTIVO -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">1. RESUMEN EJECUTIVO</h2>
+            
+            <div class="resumen-destacado">
+                <div class="resumen-item">
+                    <span class="resumen-label">Nivel Actual (Cota):</span> 
+                    {{ datos_actual.nivel_actual_msnm|round(2) }} msnm 
+                    ({{ datos_actual.porcentaje_capacidad|round(1) }}% sobre cota máx.)
+                    {% if datos_actual.porcentaje_capacidad < datos_actual.percentil_20 %}
+                    <span class="estado-badge estado-alerta">NIVEL BAJO</span>
+                    {% elif datos_actual.porcentaje_capacidad > datos_actual.percentil_80 %}
+                    <span class="estado-badge estado-normal">NIVEL ALTO</span>
+                    {% else %}
+                    <span class="estado-badge estado-normal">NIVEL NORMAL</span>
+                    {% endif %}
+                </div>
+                
+                <div class="resumen-item">
+                    <span class="resumen-label">Tendencia Semanal:</span>
+                    {% if datos_historicos_semana and datos_historicos_semana|length > 1 %}
+                    {% set primer_dia = datos_historicos_semana[0] %}
+                    {% set ultimo_dia = datos_historicos_semana[-1] %}
+                    {% set cambio = ultimo_dia.nivel - primer_dia.nivel %}
+                    {% if cambio > 1.0 %}
+                    Incremento de {{ cambio|round(2) }} m
+                    <span class="estado-badge estado-normal">TENDENCIA POSITIVA</span>
+                    {% elif cambio < -1.0 %}
+                    Descenso de {{ cambio|abs|round(2) }} m
+                    <span class="estado-badge estado-precaucion">TENDENCIA NEGATIVA</span>
+                    {% else %}
+                    Nivel estable (variación: {{ cambio|abs|round(2) }} m)
+                    <span class="estado-badge estado-normal">ESTABLE</span>
+                    {% endif %}
+                    {% else %}
+                    Datos históricos no disponibles
+                    {% endif %}
+                </div>
+                
+                <div class="resumen-item">
+                    <span class="resumen-label">Pronóstico 30-90 días:</span>
+                    30 días: {{ prediccion.nivel_30d|round(2) }} msnm ({{ prediccion.porcentaje_30d|round(1) }}%) | 
+                    90 días: {{ prediccion.nivel_90d|round(2) }} msnm ({{ prediccion.porcentaje_90d|round(1) }}%)
+                </div>
+                
+                <div class="resumen-item">
+                    <span class="resumen-label">Evaluación de Riesgos:</span>
+                    {% if riesgos.sequia_grave_180d %}
+                    <span class="estado-badge estado-alerta">RIESGO DE SEQUÍA GRAVE</span>
+                    {% elif riesgos.sequia_moderada_90d %}
+                    <span class="estado-badge estado-precaucion">RIESGO DE SEQUÍA MODERADA</span>
+                    {% elif riesgos.llena_30d %}
+                    <span class="estado-badge estado-precaucion">RIESGO DE LLENADO</span>
+                    {% else %}
+                    <span class="estado-badge estado-normal">SIN RIESGOS SIGNIFICATIVOS</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if analisis_llm and analisis_llm.resumen_semanal %}
+            <div class="analisis-llm">
+                <div class="analisis-llm-titulo">Análisis de la Semana</div>
+                <div class="analisis-llm-contenido">
+                    {{ analisis_llm.resumen_semanal|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 2. EVOLUCIÓN SEMANAL -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">2. EVOLUCIÓN DURANTE LA SEMANA</h2>
+            
+            {% if graficas.evolucion_semanal %}
+            <div class="grafica-container">
+                <img src="data:image/png;base64,{{ graficas.evolucion_semanal }}" alt="Evolución semanal">
+                <p style="font-size: 8pt; color: #666; margin-top: 5px;">Gráfico 1: Evolución del nivel de embalse en los últimos 7 días</p>
+            </div>
+            {% endif %}
+            
+            {% if datos_historicos_semana and datos_historicos_semana|length > 0 %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cota (msnm)</th>
+                        <th>Variación Diaria</th>
+                        <th>Precipitación (mm)</th>
+                        <th>Temperatura (°C)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dia in datos_historicos_semana %}
+                    <tr>
+                        <td>{{ dia.fecha }}</td>
+                        <td class="valor-destacado">{{ dia.nivel|round(2) }}</td>
+                        <td>
+                            {% if loop.index > 1 %}
+                            {% set variacion = dia.nivel - datos_historicos_semana[loop.index - 2].nivel %}
+                            {{ "%+.2f"|format(variacion) }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td>{{ dia.precipitacion|round(1) if dia.precipitacion else '-' }}</td>
+                        <td>{{ dia.temperatura|round(1) if dia.temperatura else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% set niveles = datos_historicos_semana | map(attribute='nivel') | list %}
+                {% set nivel_max = niveles | max %}
+                {% set nivel_min = niveles | min %}
+                {% set nivel_promedio = (niveles | sum) / (niveles | length) %}
+                <div><strong>Cota Máxima:</strong> {{ nivel_max|round(2) }} msnm</div>
+                <div><strong>Cota Mínima:</strong> {{ nivel_min|round(2) }} msnm</div>
+                <div><strong>Cota Promedio:</strong> {{ nivel_promedio|round(2) }} msnm</div>
+                <div><strong>Rango de Variación:</strong> {{ (nivel_max - nivel_min)|round(2) }} m</div>
+            </div>
+            
+            {% else %}
+            <div class="alerta-box alerta-info">
+                <div>No hay datos históricos de la semana disponibles.</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 3. ESTADO OPERACIONAL ACTUAL -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">3. ESTADO OPERACIONAL ACTUAL</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Valor Actual</th>
+                        <th>Referencia Histórica</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Cota Actual</strong></td>
+                        <td class="valor-destacado">{{ datos_actual.nivel_actual_msnm|round(2) }} msnm</td>
+                        <td>Cota máx: {{ datos_actual.nivel_maximo_msnm|round(2) }} msnm</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Porcentaje Capacidad</strong></td>
+                        <td class="valor-destacado">{{ datos_actual.porcentaje_capacidad|round(1) }}%</td>
+                        <td>Media histórica: {{ datos_actual.media_historica|round(1) }}%</td>
+                        <td>
+                            {% if datos_actual.porcentaje_capacidad < datos_actual.percentil_20 %}
+                            <span class="estado-badge estado-alerta">Por debajo P20</span>
+                            {% elif datos_actual.porcentaje_capacidad > datos_actual.percentil_80 %}
+                            <span class="estado-badge estado-normal">Por encima P80</span>
+                            {% else %}
+                            <span class="estado-badge estado-normal">Rango normal</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Percentil 20</strong></td>
+                        <td>-</td>
+                        <td>{{ datos_actual.percentil_20|round(1) }}%</td>
+                        <td>Umbral bajo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Percentil 80</strong></td>
+                        <td>-</td>
+                        <td>{{ datos_actual.percentil_80|round(1) }}%</td>
+                        <td>Umbral alto</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 4. PREDICCIÓN Y ESCENARIOS -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">4. PREDICCIÓN Y ANÁLISIS DE ESCENARIOS</h2>
+            
+            {% if graficas.proyeccion %}
+            <div class="grafica-container">
+                <img src="data:image/png;base64,{{ graficas.proyeccion }}" alt="Proyección de niveles">
+                <p style="font-size: 8pt; color: #666; margin-top: 5px;">Gráfico 2: Proyección de niveles msnm (30, 90 y 180 días)</p>
+            </div>
+            {% endif %}
+
+            <h3 class="seccion-subtitulo">Predicción Base del Modelo</h3>
+            <table class="tabla-centrada">
+                <thead>
+                    <tr>
+                        <th>Horizonte</th>
+                        <th>30 Días</th>
+                        <th>90 Días</th>
+                        <th>180 Días</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Cota (msnm)</strong></td>
+                        <td>{{ prediccion.nivel_30d|round(2) }}</td>
+                        <td>{{ prediccion.nivel_90d|round(2) }}</td>
+                        <td>{{ prediccion.nivel_180d|round(2) }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Porcentaje</strong></td>
+                        <td>{{ prediccion.porcentaje_30d|round(1) }}%</td>
+                        <td>{{ prediccion.porcentaje_90d|round(1) }}%</td>
+                        <td>{{ prediccion.porcentaje_180d|round(1) }}%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Variación</strong></td>
+                        <td>
+                            {% set cambio = prediccion.porcentaje_30d - datos_actual.porcentaje_capacidad %}
+                            {{ "%+.1f"|format(cambio) }}%
+                        </td>
+                        <td>
+                            {% set cambio = prediccion.porcentaje_90d - datos_actual.porcentaje_capacidad %}
+                            {{ "%+.1f"|format(cambio) }}%
+                        </td>
+                        <td>
+                            {% set cambio = prediccion.porcentaje_180d - datos_actual.porcentaje_capacidad %}
+                            {{ "%+.1f"|format(cambio) }}%
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Visualización de Predicciones -->
+            <div style="margin-top: 25px; background: white; padding: 20px; border-radius: 4px; border: 1px solid #dee2e6;">
+                <h4 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">Pronóstico Hidrológico a Medio y Largo Plazo</h4>
+                
+                {% set nivel_actual_pct = (datos_actual.nivel_actual_msnm / datos_actual.nivel_maximo_msnm * 100)|round(1) %}
+                {% set nivel_30d_pct = (prediccion.nivel_30d / datos_actual.nivel_maximo_msnm * 100)|round(1) %}
+                {% set nivel_90d_pct = (prediccion.nivel_90d / datos_actual.nivel_maximo_msnm * 100)|round(1) %}
+                {% set nivel_180d_pct = (prediccion.nivel_180d / datos_actual.nivel_maximo_msnm * 100)|round(1) %}
+                
+                <div style="margin: 15px 0;">
+                    <div style="font-size: 10pt; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">Nivel Actual: {{ datos_actual.nivel_actual_msnm|round(2) }} msnm ({{ datos_actual.porcentaje_capacidad|round(1) }}%)</div>
+                    <div style="background: #f8f9fa; border-radius: 4px; height: 35px; position: relative; border: 1px solid #dee2e6;">
+                        <div style="background: linear-gradient(to right, #2c3e50, #34495e); height: 100%; width: {{ nivel_actual_pct }}%; border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 9pt; font-weight: 600;">{{ nivel_actual_pct }}%</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="font-size: 10pt; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">Pronóstico 30 días: {{ prediccion.nivel_30d|round(2) }} msnm ({{ prediccion.porcentaje_30d|round(1) }}%)</div>
+                    <div style="background: #f8f9fa; border-radius: 4px; height: 35px; position: relative; border: 1px solid #dee2e6;">
+                        <div style="background: linear-gradient(to right, #3498db, #5dade2); height: 100%; width: {{ nivel_30d_pct }}%; border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 9pt; font-weight: 600;">{{ nivel_30d_pct }}%</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="font-size: 10pt; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">Pronóstico 90 días: {{ prediccion.nivel_90d|round(2) }} msnm ({{ prediccion.porcentaje_90d|round(1) }}%)</div>
+                    <div style="background: #f8f9fa; border-radius: 4px; height: 35px; position: relative; border: 1px solid #dee2e6;">
+                        <div style="background: linear-gradient(to right, #e74c3c, #ec7063); height: 100%; width: {{ nivel_90d_pct }}%; border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 9pt; font-weight: 600;">{{ nivel_90d_pct }}%</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="font-size: 10pt; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">Pronóstico 180 días: {{ prediccion.nivel_180d|round(2) }} msnm ({{ prediccion.porcentaje_180d|round(1) }}%)</div>
+                    <div style="background: #f8f9fa; border-radius: 4px; height: 35px; position: relative; border: 1px solid #dee2e6;">
+                        <div style="background: linear-gradient(to right, #e67e22, #f39c12); height: 100%; width: {{ nivel_180d_pct }}%; border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 9pt; font-weight: 600;">{{ nivel_180d_pct }}%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="seccion-subtitulo">Escenarios Alternativos (180 días)</h3>
+            
+            <div class="escenario-box escenario-conservador">
+                <div class="escenario-titulo">Escenario Conservador</div>
+                <div>Cota proyectada: <strong>{{ escenarios.pesimista.nivel_180d|round(2) }} msnm</strong></div>
+                <div style="font-size: 9pt; margin-top: 5px;">Considera condiciones meteorológicas desfavorables (precipitaciones por debajo de la media histórica)</div>
+            </div>
+            
+            <div class="escenario-box escenario-neutro">
+                <div class="escenario-titulo">Escenario Neutro (Base)</div>
+                <div>Cota proyectada: <strong>{{ escenarios.neutro.nivel_180d|round(2) }} msnm</strong></div>
+                <div style="font-size: 9pt; margin-top: 5px;">Predicción base del modelo con condiciones meteorológicas promedio</div>
+            </div>
+            
+            <div class="escenario-box escenario-agresivo">
+                <div class="escenario-titulo">Escenario Optimista</div>
+                <div>Cota proyectada: <strong>{{ escenarios.optimista.nivel_180d|round(2) }} msnm</strong></div>
+                <div style="font-size: 9pt; margin-top: 5px;">Considera condiciones meteorológicas favorables (precipitaciones por encima de la media histórica)</div>
+            </div>
+            
+            <!-- Comparativa de Escenarios -->
+            <div style="margin-top: 25px; background: white; padding: 20px; border-radius: 4px; border: 1px solid #dee2e6;">
+                <h4 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">Comparativa de Escenarios a 180 Días</h4>
+                
+                {% set pesimista_pct = (escenarios.pesimista.nivel_180d / datos_actual.nivel_maximo_msnm * 100)|round(1) if datos_actual.nivel_maximo_msnm > 0 else 0 %}
+                {% set neutro_pct = (escenarios.neutro.nivel_180d / datos_actual.nivel_maximo_msnm * 100)|round(1) if datos_actual.nivel_maximo_msnm > 0 else 0 %}
+                {% set optimista_pct = (escenarios.optimista.nivel_180d / datos_actual.nivel_maximo_msnm * 100)|round(1) if datos_actual.nivel_maximo_msnm > 0 else 0 %}
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Escenario</th>
+                            <th>Cota Proyectada</th>
+                            <th>% sobre máxima</th>
+                            <th>Visualización</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: #dc3545;">Conservador</strong></td>
+                            <td>{{ escenarios.pesimista.nivel_180d|round(2) }} msnm</td>
+                            <td>{{ pesimista_pct }}%</td>
+                            <td>
+                                <div style="background: #f8f9fa; border-radius: 4px; height: 25px; width: 100%; border: 1px solid #dee2e6;">
+                                    <div style="background: linear-gradient(to right, #dc3545, #e74c3c); height: 100%; width: {{ pesimista_pct }}%; border-radius: 4px 0 0 4px;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #3498db;">Neutro (Base)</strong></td>
+                            <td>{{ escenarios.neutro.nivel_180d|round(2) }} msnm</td>
+                            <td>{{ neutro_pct }}%</td>
+                            <td>
+                                <div style="background: #f8f9fa; border-radius: 4px; height: 25px; width: 100%; border: 1px solid #dee2e6;">
+                                    <div style="background: linear-gradient(to right, #3498db, #5dade2); height: 100%; width: {{ neutro_pct }}%; border-radius: 4px 0 0 4px;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #28a745;">Optimista</strong></td>
+                            <td>{{ escenarios.optimista.nivel_180d|round(2) }} msnm</td>
+                            <td>{{ optimista_pct }}%</td>
+                            <td>
+                                <div style="background: #f8f9fa; border-radius: 4px; height: 25px; width: 100%; border: 1px solid #dee2e6;">
+                                    <div style="background: linear-gradient(to right, #28a745, #27ae60); height: 100%; width: {{ optimista_pct }}%; border-radius: 4px 0 0 4px;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 15px; padding: 12px; background: #f0f4f8; border-radius: 4px; font-size: 9pt; color: #555; line-height: 1.6;">
+                    <strong>Nota técnica:</strong> Los escenarios representan proyecciones bajo diferentes condiciones hidrológicas. 
+                    El escenario conservador asume precipitaciones un 20% por debajo de la media histórica, 
+                    el neutro considera condiciones normales, y el optimista proyecta precipitaciones un 20% por encima de la media.
+                </div>
+            </div>
+            
+            {% if analisis_llm and analisis_llm.analisis_escenarios %}
+            <div class="analisis-llm">
+                <div class="analisis-llm-titulo">Interpretación de Escenarios</div>
+                <div class="analisis-llm-contenido">
+                    {{ analisis_llm.analisis_escenarios|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 5. EVALUACIÓN DE RIESGOS -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">5. EVALUACIÓN DE RIESGOS</h2>
+            
+            {% if riesgos.sequia_grave_180d %}
+            <div class="alerta-box alerta-critica">
+                <div class="alerta-titulo">RIESGO CRÍTICO - SEQUÍA GRAVE (180 días)</div>
+                <div>Se detecta riesgo de sequía grave en horizonte de 180 días. El nivel proyectado descenderá por debajo del percentil 20 histórico. Es necesario activar protocolo de gestión de sequía y coordinar con autoridades competentes.</div>
+            </div>
+            {% endif %}
+            
+            {% if riesgos.sequia_moderada_90d %}
+            <div class="alerta-box alerta-precaucion">
+                <div class="alerta-titulo">RIESGO MODERADO - SEQUÍA (90 días)</div>
+                <div>Se detecta riesgo de sequía moderada en horizonte de 90 días. El nivel descenderá significativamente en los próximos 3 meses. Se recomienda implementar medidas preventivas de ahorro de agua.</div>
+            </div>
+            {% endif %}
+            
+            {% if riesgos.llena_30d %}
+            <div class="alerta-box alerta-precaucion">
+                <div class="alerta-titulo">PRECAUCIÓN - LLENADO EXCESIVO (30 días)</div>
+                <div>Posible llenado excesivo en los próximos 30 días. Se recomienda evaluar incremento de desembalses preventivos para mantener niveles operativos seguros.</div>
+            </div>
+            {% endif %}
+            
+            {% if not (riesgos.sequia_grave_180d or riesgos.sequia_moderada_90d or riesgos.llena_30d) %}
+            <div class="alerta-box alerta-info">
+                <div class="alerta-titulo">SITUACIÓN OPERATIVA NORMAL</div>
+                <div>No se han identificado riesgos críticos en los horizontes de predicción analizados. El embalse se encuentra dentro de los parámetros operativos normales. Continuar con el plan de gestión establecido y mantener monitoreo regular.</div>
+            </div>
+            {% endif %}
+            
+            <h3 class="seccion-subtitulo">Matriz de Riesgos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo de Riesgo</th>
+                        <th>Horizonte Temporal</th>
+                        <th>Probabilidad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sequía Grave</td>
+                        <td>180 días</td>
+                        <td>
+                            {% if riesgos.sequia_grave_180d %}Alta{% else %}Baja{% endif %}
+                        </td>
+                        <td>
+                            {% if riesgos.sequia_grave_180d %}
+                            <span class="estado-badge estado-alerta">DETECTADO</span>
+                            {% else %}
+                            <span class="estado-badge estado-normal">NO DETECTADO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sequía Moderada</td>
+                        <td>90 días</td>
+                        <td>
+                            {% if riesgos.sequia_moderada_90d %}Media-Alta{% else %}Baja{% endif %}
+                        </td>
+                        <td>
+                            {% if riesgos.sequia_moderada_90d %}
+                            <span class="estado-badge estado-precaucion">DETECTADO</span>
+                            {% else %}
+                            <span class="estado-badge estado-normal">NO DETECTADO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Llenado Excesivo</td>
+                        <td>30 días</td>
+                        <td>
+                            {% if riesgos.llena_30d %}Media{% else %}Baja{% endif %}
+                        </td>
+                        <td>
+                            {% if riesgos.llena_30d %}
+                            <span class="estado-badge estado-precaucion">DETECTADO</span>
+                            {% else %}
+                            <span class="estado-badge estado-normal">NO DETECTADO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            {% if analisis_llm and analisis_llm.analisis_riesgos %}
+            <div class="analisis-llm">
+                <div class="analisis-llm-titulo">Análisis Detallado de Riesgos</div>
+                <div class="analisis-llm-contenido">
+                    {{ analisis_llm.analisis_riesgos|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 6. RECOMENDACIONES ESTRATÉGICAS -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">6. RECOMENDACIONES ESTRATÉGICAS</h2>
+            
+            {% if recomendaciones|length > 0 %}
+                <h3 class="seccion-subtitulo">Recomendaciones Operativas</h3>
+                {% for rec in recomendaciones %}
+                <div class="recomendacion-box">
+                    <div class="recomendacion-numero">{{ loop.index }}. {{ rec.accion }}</div>
+                    <div class="recomendacion-detalle" style="margin-top: 8px;">
+                        <span class="recomendacion-label">Justificación Técnica:</span> {{ rec.justificacion }}
+                    </div>
+                    <div class="recomendacion-detalle">
+                        <span class="recomendacion-label">Impacto Esperado:</span> {{ rec.impacto }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="alerta-box alerta-info">
+                <div>El embalse se encuentra en condiciones normales de operación. No se requieren acciones especiales en este momento. Mantener el plan de gestión establecido.</div>
+            </div>
+            {% endif %}
+            
+            {% if analisis_llm and analisis_llm.recomendaciones_estrategicas %}
+            <div class="analisis-llm">
+                <div class="analisis-llm-titulo">Recomendaciones Adicionales</div>
+                <div class="analisis-llm-contenido">
+                    {{ analisis_llm.recomendaciones_estrategicas|safe }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if analisis_llm and analisis_llm.plan_accion_semanal %}
+            <div class="analisis-llm">
+                <div class="analisis-llm-titulo">Plan de Acción para la Próxima Semana</div>
+                <div class="analisis-llm-contenido">
+                    {{ analisis_llm.plan_accion_semanal|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 7. RESUMEN TÉCNICO Y CONSIDERACIONES -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">7. RESUMEN TÉCNICO Y CONSIDERACIONES FINALES</h2>
+            
+            <div style="background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 15px; margin: 15px 0;">
+                <div style="font-weight: 700; font-size: 11pt; margin-bottom: 10px; color: #2c3e50;">Balance Semanal</div>
+                {% if datos_historicos_semana and datos_historicos_semana|length > 0 %}
+                {% set primer_dia = datos_historicos_semana[0] %}
+                {% set ultimo_dia = datos_historicos_semana[-1] %}
+                {% set cambio_semanal = ultimo_dia.nivel - primer_dia.nivel %}
+                <div style="font-size: 10pt; line-height: 1.6;">
+                    <p><strong>Variación de la Semana:</strong> {{ "%+.2f"|format(cambio_semanal) }} m (de {{ primer_dia.nivel|round(2) }} a {{ ultimo_dia.nivel|round(2) }} msnm)</p>
+                    <p><strong>Variación Media Diaria:</strong> {{ "%+.3f"|format(cambio_semanal / 7) }} m/día</p>
+                    <p><strong>Tendencia Observada:</strong> 
+                    {% if cambio_semanal > 1.0 %}
+                    Incremento sostenido - Posible aumento de aportes
+                    {% elif cambio_semanal < -1.0 %}
+                    Descenso sostenido - Revisar balance hídrico
+                    {% else %}
+                    Estabilidad relativa - Equilibrio entre aportes y salidas
+                    {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <h3 class="seccion-subtitulo">Indicadores de Gestión</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>Valor Actual</th>
+                        <th>Estimación 30d</th>
+                        <th>Estimación 90d</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nivel de Llenado</strong></td>
+                        <td>{{ datos_actual.porcentaje_capacidad|round(1) }}%</td>
+                        <td>{{ prediccion.porcentaje_30d|round(1) }}%</td>
+                        <td>{{ prediccion.porcentaje_90d|round(1) }}%</td>
+                        <td>
+                            {% if datos_actual.porcentaje_capacidad > 90 %}
+                            <span class="estado-badge estado-alerta">MUY ALTO</span>
+                            {% elif datos_actual.porcentaje_capacidad < 30 %}
+                            <span class="estado-badge estado-precaucion">BAJO</span>
+                            {% else %}
+                            <span class="estado-badge estado-normal">NORMAL</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Margen de Seguridad</strong></td>
+                        <td>{{ (100 - datos_actual.porcentaje_capacidad)|round(1) }}%</td>
+                        <td>{{ (100 - prediccion.porcentaje_30d)|round(1) }}%</td>
+                        <td>{{ (100 - prediccion.porcentaje_90d)|round(1) }}%</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Capacidad Disponible</strong></td>
+                        <td>{{ (datos_actual.nivel_maximo_msnm - datos_actual.nivel_actual_msnm)|round(2) }} m</td>
+                        <td>{{ (datos_actual.nivel_maximo_msnm - prediccion.nivel_30d)|round(2) }} m</td>
+                        <td>{{ (datos_actual.nivel_maximo_msnm - prediccion.nivel_90d)|round(2) }} m</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 4px; font-size: 9pt; line-height: 1.6;">
+                <div style="font-weight: 700; margin-bottom: 8px; font-size: 10pt;">Consideraciones Técnicas:</div>
+                <ul style="margin-left: 20px;">
+                    <li style="margin: 5px 0;">Las estimaciones hidrológicas se basan en análisis de series históricas y condiciones meteorológicas previstas.</li>
+                    <li style="margin: 5px 0;">Los escenarios alternativos permiten evaluar el impacto de condiciones meteorológicas variables.</li>
+                    <li style="margin: 5px 0;">Se recomienda revisar y actualizar este informe ante cambios significativos en las condiciones operacionales.</li>
+                    <li style="margin: 5px 0;">La gestión debe considerar no solo los niveles actuales sino también las tendencias y la estacionalidad histórica.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 8. METADATOS Y TRAZABILIDAD -->
+        <div class="seccion">
+            <h2 class="seccion-titulo">8. INFORMACIÓN DEL DOCUMENTO</h2>
+            
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 35%;"><strong>Código Embalse</strong></td>
+                        <td>{{ embalse_id }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre Embalse</strong></td>
+                        <td>{{ nombre_embalse }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tipo de Informe</strong></td>
+                        <td>SEMANAL</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Periodo Analizado</strong></td>
+                        <td>
+                            {% if fecha_inicio_periodo and fecha_fin_periodo %}
+                            {{ fecha_inicio_periodo.strftime('%d/%m/%Y') }} - {{ fecha_fin_periodo.strftime('%d/%m/%Y') }}
+                            {% else %}
+                            No especificado
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fecha de Generación</strong></td>
+                        <td>{{ fecha_generacion.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Versión del Modelo</strong></td>
+                        <td>{{ model_version }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Usuario Solicitante</strong></td>
+                        <td>{{ usuario }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sistema</strong></td>
+                        <td>AquaIA - Sistema de Predicción de Embalses</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-linea"><strong>Sistema de Predicción de Embalses AquaIA</strong></div>
+            <div class="footer-linea">Informe Semanal | Generado automáticamente el {{ fecha_generacion.strftime('%d/%m/%Y a las %H:%M') }}</div>
+            <div class="footer-linea">Confederación Hidrográfica | Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO)</div>
+            <div class="footer-linea" style="margin-top: 8px; font-size: 7pt;">
+                Este documento contiene información técnica basada en modelos predictivos. Las recomendaciones deben ser evaluadas por personal cualificado antes de su implementación.
+            </div>
+        </div>
+    </div>
+    
+
+</body>
+</html>
