@@ -8,13 +8,17 @@ import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import Alert from '../../components/Alert/Alert'
 import { formatNumber, formatPercentage, getLlenadoColor } from '../../lib/utils'
 
+const calcularPorcentajeLlenado = (nivelActual, nivelMaximo) => {
+  if (!nivelMaximo || nivelMaximo <= 0) return 0
+  return ((nivelActual || 0) / nivelMaximo) * 100
+}
+
 function EmbalseCard({ embalse }) {
-  // Calcular porcentaje de llenado
-  const porcentaje = embalse.nivel_maximo > 0 
-    ? ((embalse.ultimo_nivel || 0) / embalse.nivel_maximo) * 100 
-    : 0
-  
-  const colorClass = getLlenadoColor(porcentaje)
+  const porcentajeLlenado = calcularPorcentajeLlenado(
+    embalse.ultimo_nivel, 
+    embalse.nivel_maximo
+  )
+  const colorClass = getLlenadoColor(porcentajeLlenado)
 
   return (
     <Link 
@@ -27,7 +31,7 @@ function EmbalseCard({ embalse }) {
           <p className="text-sm text-gray-500">{embalse.codigo_saih}</p>
         </div>
         <span className={`badge badge-${colorClass}`}>
-          {formatPercentage(porcentaje, 0)}
+          {formatPercentage(porcentajeLlenado, 0)}
         </span>
       </div>
       
@@ -46,11 +50,10 @@ function EmbalseCard({ embalse }) {
         </div>
       </div>
 
-      {/* Barra de progreso */}
       <div className="w-full bg-gray-200 rounded-full h-2.5 mb-3">
         <div
           className={`bg-${colorClass}-500 h-2.5 rounded-full transition-all`}
-          style={{ width: `${Math.min(porcentaje, 100)}%` }}
+          style={{ width: `${Math.min(porcentajeLlenado, 100)}%` }}
         />
       </div>
 

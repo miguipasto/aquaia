@@ -47,7 +47,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         process_time = time.time() - start_time
         
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
+        
+        # Permitir iframes para la previsualización de informes en el frontend
+        if "/api/informes/preview/" in str(request.url):
+            # Usar una política más permisiva para previsualización
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
+            # CSP para permitir ser enmarcado por el frontend
+            response.headers["Content-Security-Policy"] = "frame-ancestors 'self' http://localhost:3000 http://localhost:3001 http://localhost:8080"
+        else:
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
+            
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         response.headers["X-Process-Time"] = str(process_time)

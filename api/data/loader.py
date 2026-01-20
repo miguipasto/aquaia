@@ -209,7 +209,44 @@ class DataLoader:
             df['provincia'] = self._estaciones_cache[codigo_saih]['provincia']
         
         return df.sort_values('fecha')
-    
+
+    def get_embalse_actual(self, codigo_saih: str, fecha: Optional[str] = None):
+        """
+        Obtiene el estado actual (o en una fecha dada) de un embalse.
+        
+        Args:
+            codigo_saih: Código del embalse
+            fecha: Fecha de consulta (YYYY-MM-DD), opcional
+            
+        Returns:
+            Objeto con nombre, nivel_actual, capacidad_total y fecha o None
+        """
+        query = """
+        SELECT 
+            e.ubicacion as nombre,
+            n.nivel as nivel_actual,
+            e.nivel_maximo as capacidad_total,
+            n.fecha
+        FROM estacion_saih e
+        JOIN saih_nivel_embalse n ON e.codigo_saih = n.codigo_saih
+        WHERE e.codigo_saih = %s
+        """
+        
+        params = [codigo_saih]
+        if fecha:
+            query += " AND n.fecha <= %s"
+            params.append(fecha)
+            
+        query += " ORDER BY n.fecha DESC LIMIT 1"
+        
+        results = db_connection.execute_query(query, tuple(params))
+        
+        if not results:
+            return None
+            
+        from types import SimpleNamespace
+        return SimpleNamespace(**results[0])
+
     def get_historico(
         self, 
         codigo_saih: str,

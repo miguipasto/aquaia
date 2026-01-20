@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-// Configurar base URL de la API
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const api = axios.create({
@@ -8,12 +7,17 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000,
 })
 
-// Interceptor para manejar errores globalmente
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      console.error('Unauthorized access')
+    } else if (error.response?.status >= 500) {
+      console.error('Server error:', error.response.data)
+    }
     return Promise.reject(error)
   }
 )
