@@ -1,102 +1,64 @@
-/**
- * Utilidades para formateo y validación de datos
- */
+const EMPTY_VALUE = '-'
 
-/**
- * Formatea un número como porcentaje
- */
+const LOCALE = 'es-ES'
+
+const DATE_FORMATS = {
+  short: { day: '2-digit', month: '2-digit', year: 'numeric' },
+  medium: { day: '2-digit', month: 'short', year: 'numeric' },
+  long: { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' },
+}
+
+const ESTADO_CONFIG = {
+  critico_alto: { color: 'danger', text: 'Crítico Alto' },
+  alto: { color: 'warning', text: 'Alto' },
+  normal: { color: 'success', text: 'Normal' },
+  bajo: { color: 'warning', text: 'Bajo' },
+  critico_bajo: { color: 'danger', text: 'Crítico Bajo' },
+  desconocido: { color: 'gray', text: 'Desconocido' },
+}
+
+const SEVERIDAD_CONFIG = {
+  critical: { color: 'danger', text: 'Crítica' },
+  error: { color: 'danger', text: 'Error' },
+  warning: { color: 'warning', text: 'Advertencia' },
+  info: { color: 'primary', text: 'Información' },
+}
+
+const isValidValue = (value) => value !== null && value !== undefined
+
 export const formatPercentage = (value, decimals = 1) => {
-  if (value === null || value === undefined) return '-'
+  if (!isValidValue(value)) return EMPTY_VALUE
   return `${value.toFixed(decimals)}%`
 }
 
-/**
- * Formatea un número con separadores de miles
- */
 export const formatNumber = (value, decimals = 2) => {
-  if (value === null || value === undefined) return '-'
-  return new Intl.NumberFormat('es-ES', {
+  if (!isValidValue(value)) return EMPTY_VALUE
+  return new Intl.NumberFormat(LOCALE, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(value)
 }
 
-/**
- * Formatea una fecha
- */
 export const formatDate = (dateString, formatType = 'short') => {
-  if (!dateString) return '-'
+  if (!dateString) return EMPTY_VALUE
   
   const date = new Date(dateString)
+  const format = DATE_FORMATS[formatType] || DATE_FORMATS.short
   
-  const formats = {
-    short: { day: '2-digit', month: '2-digit', year: 'numeric' },
-    medium: { day: '2-digit', month: 'short', year: 'numeric' },
-    long: { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' },
-  }
-  
-  return new Intl.DateTimeFormat('es-ES', formats[formatType] || formats.short).format(date)
+  return new Intl.DateTimeFormat(LOCALE, format).format(date)
 }
 
-/**
- * Obtiene el color basado en el estado del embalse
- */
-export const getEstadoColor = (estado) => {
-  const colors = {
-    critico_alto: 'danger',
-    alto: 'warning',
-    normal: 'success',
-    bajo: 'warning',
-    critico_bajo: 'danger',
-    desconocido: 'gray',
-  }
-  
-  return colors[estado] || 'gray'
-}
+export const getEstadoColor = (estado) => 
+  ESTADO_CONFIG[estado]?.color || 'gray'
 
-/**
- * Obtiene el texto del estado del embalse
- */
-export const getEstadoText = (estado) => {
-  const texts = {
-    critico_alto: 'Crítico Alto',
-    alto: 'Alto',
-    normal: 'Normal',
-    bajo: 'Bajo',
-    critico_bajo: 'Crítico Bajo',
-    desconocido: 'Desconocido',
-  }
-  
-  return texts[estado] || 'Desconocido'
-}
+export const getEstadoText = (estado) => 
+  ESTADO_CONFIG[estado]?.text || 'Desconocido'
 
-/**
- * Obtiene el color basado en la severidad de una alerta
- */
-export const getSeveridadColor = (severidad) => {
-  const colors = {
-    critical: 'danger',
-    error: 'danger',
-    warning: 'warning',
-    info: 'primary',
-  }
-  
-  return colors[severidad] || 'gray'
-}
+export const getSeveridadColor = (severidad) => 
+  SEVERIDAD_CONFIG[severidad]?.color || 'gray'
 
-/**
- * Obtiene el texto de la severidad
- */
-export const getSeveridadText = (severidad) => {
-  const texts = {
-    critical: 'Crítica',
-    error: 'Error',
-    warning: 'Advertencia',
-    info: 'Información',
-  }
-  
-  return texts[severidad] || severidad
-}
+export const getSeveridadText = (severidad) => 
+  SEVERIDAD_CONFIG[severidad]?.text || severidad
 
 /**
  * Obtiene el color del nivel de riesgo

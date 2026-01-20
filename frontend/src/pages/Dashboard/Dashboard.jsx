@@ -52,13 +52,17 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, color = 'primary' 
   )
 }
 
-function EmbalseCard({ embalse, fechaReferencia }) {
-  // Calcular porcentaje de llenado
-  const porcentaje = embalse.nivel_maximo > 0 
-    ? ((embalse.ultimo_nivel || 0) / embalse.nivel_maximo) * 100 
-    : 0
-  
-  const colorClass = getLlenadoColor(porcentaje)
+const calcularPorcentajeLlenado = (nivelActual, nivelMaximo) => {
+  if (!nivelMaximo || nivelMaximo <= 0) return 0
+  return ((nivelActual || 0) / nivelMaximo) * 100
+}
+
+function EmbalseCard({ embalse }) {
+  const porcentajeLlenado = calcularPorcentajeLlenado(
+    embalse.ultimo_nivel, 
+    embalse.nivel_maximo
+  )
+  const colorClass = getLlenadoColor(porcentajeLlenado)
 
   return (
     <Link 
@@ -71,7 +75,7 @@ function EmbalseCard({ embalse, fechaReferencia }) {
           <p className="text-sm text-gray-500">{embalse.provincia}</p>
         </div>
         <span className={`badge badge-${colorClass}`}>
-          {formatPercentage(porcentaje, 0)}
+          {formatPercentage(porcentajeLlenado, 0)}
         </span>
       </div>
       
@@ -85,12 +89,11 @@ function EmbalseCard({ embalse, fechaReferencia }) {
           <span className="font-medium">{formatNumber(embalse.nivel_maximo)} msnm</span>
         </div>
         
-        {/* Barra de progreso */}
         <div className="mt-3">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
               className={`bg-${colorClass}-500 h-2 rounded-full transition-all`}
-              style={{ width: `${Math.min(porcentaje, 100)}%` }}
+              style={{ width: `${Math.min(porcentajeLlenado, 100)}%` }}
             />
           </div>
         </div>

@@ -38,6 +38,7 @@ import {
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import Alert from '../../components/Alert/Alert'
 import FuenteBadge from '../../components/FuenteBadge/FuenteBadge'
+import GenerarInformeButton from '../../components/GenerarInforme/GenerarInformeButton'
 import {
   formatNumber,
   formatPercentage,
@@ -248,12 +249,25 @@ function EmbalseDetail() {
             </div>
           </div>
 
-          <div className="mt-4 lg:mt-0 lg:ml-8">
+          <div className="mt-4 lg:mt-0 lg:ml-8 flex flex-col items-center gap-4">
             <div className="text-center">
               <span className={`badge badge-${estadoColor} text-lg px-4 py-2`}>
                 {getEstadoText(embalseActual.estado)}
               </span>
             </div>
+            
+            <GenerarInformeButton 
+              embalseData={embalseActual}
+              predicciones={prediccion}
+              recomendaciones={recomendacion ? [
+                {
+                  accion: recomendacion.accion_recomendada,
+                  justificacion: recomendacion.motivo,
+                  impacto: 'Impacto calculado por el sistema experto'
+                }
+              ] : []}
+              variant="mini"
+            />
           </div>
         </div>
       </div>

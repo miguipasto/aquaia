@@ -2,8 +2,9 @@
 Modelos Pydantic para request/response de la API.
 """
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 from datetime import date, datetime
+from enum import Enum
 
 
 class EmbalseInfo(BaseModel):
@@ -497,3 +498,91 @@ class ConfiguracionAlerta(BaseModel):
     umbral_bajo: float = Field(30.0, description="Porcentaje para alerta baja")
     umbral_alto: float = Field(80.0, description="Porcentaje para alerta alta")
     umbral_critico_alto: float = Field(95.0, description="Porcentaje para alerta crítica alta")
+
+
+# =============================================================================
+# MODELOS PARA INFORMES
+# =============================================================================
+
+class TipoInforme(str, Enum):
+    """Tipos de informes disponibles."""
+    DIARIO = "diario"
+    SEMANAL = "semanal"
+
+
+class InformeRequest(BaseModel):
+    """Request para generar un informe completo."""
+    embalse_id: str = Field(..., description="Código SAIH del embalse")
+    nombre_embalse: str = Field(..., description="Nombre del embalse")
+    tipo_informe: TipoInforme = Field(..., description="Tipo: diario o semanal")
+    fecha_generacion: datetime = Field(default_factory=datetime.now, description="Fecha de generación")
+    usuario: str = Field("Miguel Pastoriza Santaclara", description="Usuario que solicita el informe")
+    model_version: str = Field("v1.0", description="Versión del modelo predictivo usado")
+    
+    # Datos para el informe
+    datos_actual: Optional[Dict] = Field(None, description="Datos del estado actual")
+    prediccion: Optional[Dict] = Field(None, description="Datos de la predicción")
+    riesgos: Optional[Dict] = Field(None, description="Análisis de riesgos")
+    metricas_modelo: Optional[Dict] = Field(None, description="Métricas de calidad")
+    
+    # Campos adicionales para informe SEMANAL
+    datos_historicos_semana: Optional[List] = Field(None, description="Evolución de la última semana")
+    escenarios: Optional[Dict] = Field(None, description="Análisis de escenarios (optimista/pesimista)")
+    fecha_inicio_periodo: Optional[datetime] = None
+    fecha_fin_periodo: Optional[datetime] = None
+
+
+class InformeResponse(BaseModel):
+    """Response de informe generado."""
+    success: bool
+    pdf_url: Optional[str] = Field(None, description="URL para descargar PDF")
+    html_url: str = Field(..., description="URL para previsualización HTML")
+    informe_id: str = Field(..., description="ID único del informe")
+    fecha_generacion: datetime
+    metadata: Dict = Field(..., description="Metadatos del informe")
+
+# ============================================================================
+# MODELOS DE EVALUACIÓN DEL SISTEMA
+# ============================================================================
+
+class PerfilEvaluacion(str, Enum):
+    """Perfil del evaluador."""
+    TECNICO = "tecnico"
+    GESTION = "gestion"
+
+
+class EvaluacionRequest(BaseModel):
+    """Request para crear una evaluación."""
+    # Datos básicos del evaluador
+    nombre: Optional[str] = Field(None, max_length=100, description="Nombre del evaluador (opcional)")
+    email: Optional[str] = Field(None, max_length=100, description="Email del evaluador (opcional)")
+    organizacion: Optional[str] = Field(None, max_length=150, description="Organización/entidad")
+    perfil: PerfilEvaluacion = Field(..., description="Perfil del evaluador")
+    anos_experiencia: Optional[int] = Field(None, ge=0, le=50, description="Años de experiencia")
+    
+    # Respuestas (valoración 1-5)
+    respuestas: Dict[str, int] = Field(..., description="Respuestas a las preguntas (clave: pregunta_id, valor: 1-5)")
+    comentarios: Optional[str] = Field(None, max_length=1000, description="Comentarios adicionales")
+    
+    @field_validator('respuestas')
+    def validar_respuestas(cls, v):
+        for key, value in v.items():
+            if not isinstance(value, int) or value < 1 or value > 5:
+                raise ValueError(f"La respuesta '{key}' debe ser un valor entre 1 y 5")
+        return v
+
+
+class EvaluacionResponse(BaseModel):
+    """Response de evaluación creada."""
+    id: int
+    fecha_evaluacion: datetime
+    perfil: str
+    mensaje: str = "Evaluación registrada correctamente"
+
+
+class EstadisticasEvaluacion(BaseModel):
+    """Estadísticas agregadas de evaluaciones."""
+    total_evaluaciones: int
+    por_perfil: Dict[str, Any]  # {perfil: {total: int, promedios: Dict[str, float]}}
+    distribucion_experiencia: List[Dict[str, Any]]  # [{rango: str, cantidad: int}]
+    comentarios_recientes: List[Dict[str, Any]]  # [{perfil: str, comentario: str, fecha: str}]

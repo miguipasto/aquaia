@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FileText, Filter, TrendingUp, Sparkles, RefreshCw, Zap, Database, FileCode } from 'lucide-react'
+import { FileText, Filter, TrendingUp, Sparkles, RefreshCw } from 'lucide-react'
 import useDateStore from '../../store/dateStore'
-import { getEmbalses, getRecomendacion, getLLMSalud, getLLMEstadisticas, generarRecomendacionForzada } from '../../services/dashboardService'
+import { getEmbalses, getRecomendacion, generarRecomendacionForzada } from '../../services/dashboardService'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import Alert from '../../components/Alert/Alert'
 import FuenteBadge from '../../components/FuenteBadge/FuenteBadge'
+import GenerarInformeButton from '../../components/GenerarInforme/GenerarInformeButton'
 import { getRiesgoColor, formatNumber } from '../../lib/utils'
 
 function RecomendacionCard({ embalse, fechaRef }) {
@@ -132,6 +133,23 @@ function RecomendacionCard({ embalse, fechaRef }) {
           />
         </div>
       )}
+
+      {/* Botón para generar informe */}
+      <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+        <GenerarInformeButton 
+          embalseData={embalse}
+          predicciones={null} // El botón las buscará si son null
+          recomendaciones={[
+            {
+              accion: recomendacion.accion_recomendada,
+              justificacion: recomendacion.motivo,
+              impacto: 'Impacto calculado por el sistema experto'
+            }
+          ]}
+          variant="mini"
+          className="w-full sm:w-auto"
+        />
+      </div>
     </div>
   )
 }
@@ -140,26 +158,11 @@ function Recommendations() {
   const { simulatedDate } = useDateStore()
   const [filterRiesgo, setFilterRiesgo] = useState('')
   const [filterProvincia, setFilterProvincia] = useState('')
-  const [showLLMInfo, setShowLLMInfo] = useState(false)
 
   // Obtener lista de embalses
   const { data: embalses, isLoading, error } = useQuery({
     queryKey: ['embalses', simulatedDate],
     queryFn: () => getEmbalses(simulatedDate),
-  })
-
-  // Obtener estado de Ollama
-  const { data: llmSalud } = useQuery({
-    queryKey: ['llm-salud'],
-    queryFn: getLLMSalud,
-    refetchInterval: 30000, // Refrescar cada 30 segundos
-  })
-
-  // Obtener estadísticas de LLM
-  const { data: llmStats } = useQuery({
-    queryKey: ['llm-stats'],
-    queryFn: getLLMEstadisticas,
-    enabled: showLLMInfo,
   })
 
   if (isLoading) {
@@ -204,72 +207,6 @@ function Recommendations() {
         </p>
       </div>
 
-      {/* Estado de IA */}
-      {llmSalud && (
-        <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-3">
-              <div className={`mt-1 p-2 rounded-full ${
-                llmSalud.disponible && llmSalud.modelo_disponible
-                  ? 'bg-green-100 text-green-600'
-                  : 'bg-yellow-100 text-yellow-600'
-              }`}>
-                <Zap size={20} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-1">
-                  <h3 className="font-semibold text-gray-900">Sistema de IA (Ollama)</h3>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    llmSalud.disponible && llmSalud.modelo_disponible
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {llmSalud.disponible && llmSalud.modelo_disponible ? 'Activo' : 'Inactivo'}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  {llmSalud.disponible && llmSalud.modelo_disponible ? (
-                    <>
-                      Modelo <span className="font-mono font-medium">{llmSalud.modelo_configurado}</span> disponible.
-                      Las recomendaciones se generan con IA para mayor precisión contextual.
-                    </>
-                  ) : (
-                    'IA no disponible. Usando recomendaciones basadas en plantillas.'
-                  )}
-                </p>
-                {showLLMInfo && llmStats && (
-                  <div className="mt-3 pt-3 border-t border-purple-200 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Total peticiones:</span>
-                      <span className="ml-2 font-medium">{llmStats.servicio.total_requests}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Cache hits:</span>
-                      <span className="ml-2 font-medium">{llmStats.servicio.cache_hit_rate}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Éxito LLM:</span>
-                      <span className="ml-2 font-medium">{llmStats.servicio.llm_success_rate}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Errores:</span>
-                      <span className="ml-2 font-medium">{llmStats.servicio.llm_errors}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={() => setShowLLMInfo(!showLLMInfo)}
-              className="text-xs text-purple-600 hover:text-purple-700 font-medium"
-            >
-              {showLLMInfo ? 'Ocultar' : 'Ver'} estadísticas
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Información */}
       {/* Filtros */}
       <div className="card">
         <div className="flex items-center space-x-2 mb-4">

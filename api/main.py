@@ -36,6 +36,8 @@ from .services import prediction_service, risk_service
 from .services.recomendacion import recomendacion_service
 from .routers import recomendaciones as recomendaciones_router
 from .routers import dashboard as dashboard_router
+from .routers import informes as informes_router
+from .routers import evaluaciones as evaluaciones_router
 from .middleware import SecurityMiddleware, RateLimitMiddleware, cache_response
 from .middleware.cache import get_cache_stats, clear_cache
 
@@ -104,6 +106,8 @@ app.add_middleware(RateLimitMiddleware)
 # Incluir routers
 app.include_router(recomendaciones_router.router)
 app.include_router(dashboard_router.router)
+app.include_router(informes_router.router)
+app.include_router(evaluaciones_router.router)
 
 
 @app.get(
@@ -273,7 +277,7 @@ async def obtener_resumen(codigo_saih: str):
 # FUNCIONES AUXILIARES PARA BACKGROUND TASKS
 # ============================================================================
 
-async def generar_recomendacion_background(codigo_saih: str, fecha_inicio: str, horizonte: int):
+async def generar_recomendacion_background(codigo_saih: str, fecha_inicio: str, horizonte: int, forzar_regeneracion: bool = False):
     """
     Genera una recomendación con IA en segundo plano (tarea asíncrona).
     No bloquea la respuesta de la API.
@@ -284,7 +288,7 @@ async def generar_recomendacion_background(codigo_saih: str, fecha_inicio: str, 
             codigo_saih=codigo_saih,
             fecha_inicio=fecha_inicio,
             horizonte=horizonte,
-            forzar_regeneracion=forzar
+            forzar_regeneracion=forzar_regeneracion
         )
         logger.info(
             f"[BACKGROUND] Recommendation generated for {codigo_saih}: "

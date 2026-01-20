@@ -1,11 +1,3 @@
-"""
-Endpoints REST para el dashboard del sistema AquaIA.
-
-Proporciona APIs para:
-- KPIs agregados del sistema
-- Sistema de alertas
-- Datos actuales de embalses con fecha simulada
-"""
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from datetime import date, datetime, timedelta
@@ -37,26 +29,12 @@ router = APIRouter(
     "/kpis",
     response_model=DashboardKPIs,
     summary="Obtener KPIs agregados del sistema",
-    description="""
-    Devuelve indicadores clave de rendimiento (KPIs) del sistema de embalses.
-    
-    **KPIs incluidos:**
-    - Número total de embalses monitorizados
-    - Capacidad total del sistema (msnm)
-    - Nivel total actual (msnm)
-    - Porcentaje de llenado promedio
-    - Número de embalses en estado crítico
-    - Número de alertas activas
-    - Tendencia general del sistema
-    
-    **Parámetros:**
-    - `fecha_referencia`: Permite simular KPIs en una fecha histórica específica
-    """
+    description="Devuelve indicadores clave de rendimiento (KPIs) del sistema de embalses."
 )
 async def obtener_kpis_dashboard(
     fecha_referencia: Optional[str] = Query(
         None, 
-        description="Fecha de referencia para simular dashboard (YYYY-MM-DD). Si no se especifica, usa la última fecha disponible."
+        description="Fecha de referencia para simular dashboard (YYYY-MM-DD)"
     )
 ):
     """Obtiene los KPIs agregados del sistema para el dashboard."""
@@ -72,11 +50,9 @@ async def obtener_kpis_dashboard(
                     detail="Formato de fecha inválido. Use YYYY-MM-DD"
                 )
         
-        # Obtener lista de embalses
         embalses = data_loader.get_embalses_list()
         num_embalses = len(embalses)
         
-        # Calcular métricas agregadas
         capacidad_total = 0.0
         nivel_total_actual = 0.0
         niveles_porcentaje = []
@@ -85,16 +61,13 @@ async def obtener_kpis_dashboard(
         for embalse in embalses:
             codigo = embalse['codigo_saih']
             
-            # Obtener nivel actual para la fecha de referencia
             if fecha_ref:
-                # Buscar nivel en fecha específica
                 historico = data_loader.get_historico(codigo, fecha_ref.strftime('%Y-%m-%d'), fecha_ref.strftime('%Y-%m-%d'))
                 if not historico.empty:
                     nivel_actual = float(historico.iloc[0]['nivel'])
                 else:
                     continue
             else:
-                # Usar último nivel disponible
                 resumen = data_loader.get_resumen(codigo)
                 nivel_actual = resumen['ultimo_nivel']
             
@@ -106,21 +79,17 @@ async def obtener_kpis_dashboard(
                 porcentaje = (nivel_actual / nivel_maximo) * 100
                 niveles_porcentaje.append(porcentaje)
                 
-                # Considerar crítico si está por debajo del 30% o por encima del 95%
                 if porcentaje < 30 or porcentaje > 95:
                     embalses_criticos += 1
         
-        # Calcular porcentaje promedio
         porcentaje_llenado_promedio = sum(niveles_porcentaje) / len(niveles_porcentaje) if niveles_porcentaje else 0
         
-        # Calcular tendencia (comparar con 7 días antes)
         tendencia = "estable"
         if fecha_ref:
             fecha_anterior = fecha_ref - timedelta(days=7)
         else:
             fecha_anterior = datetime.now().date() - timedelta(days=7)
         
-        # Obtener KPIs de hace 7 días para comparación
         nivel_anterior_total = 0.0
         for embalse in embalses:
             codigo = embalse['codigo_saih']
@@ -139,7 +108,6 @@ async def obtener_kpis_dashboard(
             elif cambio_porcentual < -2:
                 tendencia = "descenso"
         
-        # Número de alertas activas (mock por ahora, se calculará con el sistema de alertas)
         num_alertas_activas = embalses_criticos
         
         return {
