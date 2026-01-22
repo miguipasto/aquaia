@@ -1,0 +1,16 @@
+% Estudio de ablación: Impacto de variables AEMET
+\begin{table}[h]
+\centering
+\caption{Impacto de integrar variables meteorológicas AEMET}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuración} & \textbf{MAE (hm$^3$)} & \textbf{RMSE (hm$^3$)} & \textbf{$R^2$} \\
+\midrule
+Sin AEMET (Baseline) & 15.21 & 15.86 & -24.45 \\
+Con AEMET & 3.41 & 4.61 & -0.34 \\
+\midrule
+Mejora Absoluta & 11.80 & 11.25 & 24.11 \\
+Mejora Relativa & \textbf{77.57\%} & \textbf{70.93\%} & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

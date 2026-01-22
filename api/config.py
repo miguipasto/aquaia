@@ -195,7 +195,7 @@ class Settings(BaseSettings):
         return self.base_dir / path
     
     class Config:
-        env_file = ".env"
+        env_file = os.path.join(os.path.dirname(__file__), ".env")
         env_file_encoding = "utf-8"
         case_sensitive = False
 

@@ -1,0 +1,13 @@
+% Tiempos de generación de informes
+\begin{table}[h]
+\centering
+\caption{Tiempos de generación de informes}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Tipo Informe} & \textbf{Tiempo (s)} & \textbf{Tamaño (KB)} & \textbf{HTML Válido} \\
+\midrule
+Diario & 47.41 & 61.2 & Sí \\
+Semanal & 57.29 & 138.6 & Sí \\
+\bottomrule
+\end{tabular}
+\end{table}

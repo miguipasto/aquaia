@@ -7,7 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+  timeout: 120000, // 120 segundos para permitir generación de informes con LLM
 })
 
 api.interceptors.response.use(

@@ -1,6 +1,6 @@
-# Frontend - AquaAI Dashboard
+# Frontend - AquaIA Dashboard
 
-Dashboard web interactivo para visualización de predicciones y recomendaciones de embalses.
+Dashboard web interactivo para visualización de predicciones, recomendaciones e informes de gestión de embalses con simulación temporal y alertas en tiempo real.
 
 ## Requisitos
 
@@ -45,11 +45,23 @@ npm run build
 npm run preview
 ```
 
+## Características Principales
+
+- **Vista Global**: KPIs agregados, lista de embalses con estados
+- **Vista Detalle**: Gráficos históricos, predicciones a múltiples horizontes
+- **Recomendaciones**: Panel con nivel de riesgo, motivo y acciones
+- **Informes**: Generación y descarga de informes HTML
+- **Simulación Temporal**: Navegar por fechas históricas
+- **Alertas**: Sistema de notificaciones para niveles críticos
+- **Responsive**: Diseño adaptativo para múltiples dispositivos
+
 ## Tecnologías
 
-- React 18
-- Vite
-- TailwindCSS
-- TanStack Query (React Query)
-- Recharts
-- Axios
+- React 18 con Hooks
+- Vite (build tool rápido)
+- TailwindCSS 3 (diseño utility-first)
+- TanStack Query v5 (gestión estado servidor)
+- Recharts (gráficos interactivos)
+- Axios (cliente HTTP)
+- React Router v6 (navegación)
+- Zustand (estado local opcional)

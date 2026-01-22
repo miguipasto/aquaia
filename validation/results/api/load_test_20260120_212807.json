@@ -1,0 +1,2222 @@
+// 10 users
+{
+  "requests": [
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 8.220493999033351,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:07.819475",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 57.08400399998936,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:07.871363",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 128.6983539994253,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:08.940781",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 130.00225500036322,
+      "response_length": 3036,
+      "timestamp": "2026-01-20T21:27:08.942615",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 177.35076700046193,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:09.262656",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 55.03758499980904,
+      "response_length": 779,
+      "timestamp": "2026-01-20T21:27:09.420124",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.506074999881093,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:09.817762",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.029859001093428,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:09.818056",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.358829999546288,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:10.019842",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 181.53309099943726,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:10.995638",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 244.48915300126828,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:11.059134",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 94.48533000067982,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:11.059637",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 144.31355699889536,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:11.114416",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 82.57846400010749,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:11.165489",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.89962600072613,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:11.599604",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 5.0190139991173055,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:11.820845",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 60.702279000906856,
+      "response_length": 779,
+      "timestamp": "2026-01-20T21:27:11.877474",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 306.87573199975304,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:12.342986",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 158.25251799833495,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:12.343486",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 336.6002300008404,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:12.951873",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 331.1511590000009,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:12.953429",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 87.08146000026318,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:13.014182",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 99.809451998226,
+      "response_length": 3044,
+      "timestamp": "2026-01-20T21:27:13.023379",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.373140000097919,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:13.440111",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 58.68896500032861,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:13.658200",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.1619299988960847,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:13.658833",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 2.1712750003644032,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:13.664147",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 193.67637100003776,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:14.765931",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 175.1935840002261,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:14.766481",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.4903670000639977,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:14.852567",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 104.31875299946114,
+      "response_length": 773,
+      "timestamp": "2026-01-20T21:27:15.028245",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 104.89794900058769,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:15.029729",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.6277220003976254,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:15.262283",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 157.85688500000106,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:15.498475",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 5.71402700006729,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:15.681573",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 78.67236199854233,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:15.871635",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.611996999781695,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:27:16.372527",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 59.23163800071052,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:16.512455",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 185.83862699961173,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:17.116432",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.3467019984527724,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:17.230217",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.5490769987518433,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:17.295365",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 62.74574200142524,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:17.421439",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 255.1984010005981,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:17.657084",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 214.47656199961784,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:17.658292",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 181.5155259992025,
+      "response_length": 3036,
+      "timestamp": "2026-01-20T21:27:17.719916",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 20.896592999633867,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:17.720498",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 66.71247200029029,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:18.130846",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 167.96210000029532,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:18.824517",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 87.25974499975564,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:18.824979",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 54.35692700120853,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:19.070056",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 67.52751400017587,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:19.191958",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 62.11546799931966,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:19.519098",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 33.670675999019295,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:19.519600",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 57.774926999627496,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:19.621680",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 3.781874998821877,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:19.738087",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.142446001220378,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:19.817581",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 65.63208000079612,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:19.943497",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 60.53765300021041,
+      "response_length": 3048,
+      "timestamp": "2026-01-20T21:27:20.698953",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.0727929988643155,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:20.969789",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 161.4853530008986,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:21.262884",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 221.07844400125032,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:21.830909",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 263.8122440002917,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:21.991499",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 261.8831470008445,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:22.050094",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 252.45424099921365,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:22.198587",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 320.58316500115325,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:22.198696",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 189.74945199988724,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:22.202833",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 412.89764599969203,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:22.202927",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 4.956509999828995,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:22.413565",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.8270389995886944,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:23.013639",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 65.10892100050114,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:23.512120",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 53.9735459988151,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:23.575416",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 545.3815139990184,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:24.451451",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 498.4642130002612,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:24.454046",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 452.76845500120544,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:24.454510",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 430.4045619992394,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:24.454575",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 448.4742439999536,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:24.454938",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 98.07587800059991,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:24.455141",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 324.1558289992099,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:24.989059",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 314.83600299907266,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:24.990272",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 325.5367389992898,
+      "response_length": 3042,
+      "timestamp": "2026-01-20T21:27:25.039882",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.351476000010734,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:25.927141",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.3563960003230022,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:25.947839",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.9434190000756644,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:26.068173",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 3.0480519999400713,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:26.090683",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 158.11990099973627,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:26.409278",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 437.4292560005415,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:27.370216",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 651.9114980001177,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:27.597975",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 438.76374299907184,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:27.766867",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 580.3324040007283,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:27.767087",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 333.9763000003586,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:27.768053",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 94.31063299962261,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:27.768662",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 159.3721169992932,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:27.931270",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 55.64796100043168,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:28.100327",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.0761769994569477,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:28.621815",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 166.8022949997976,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:28.892324",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 77.89862800018454,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:28.942965",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 217.03216100104328,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:29.474863",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 199.6056949992635,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:29.476119",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.629291999459383,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:29.631436",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 503.91252000008535,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:30.201910",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 457.551618999787,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:30.202732",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 381.7874689993914,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:30.202982",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 52.69442099961452,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:30.432461",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 47.8933890008193,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:27:30.479832",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 57.31484399984765,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:30.930402",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 55.18300900075701,
+      "response_length": 3032,
+      "timestamp": "2026-01-20T21:27:31.008940",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.3997000009549083,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:31.346436",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.098752000572858,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:31.730637",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 72.87000899850682,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:27:31.863828",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 56.63340199862432,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:31.949789",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 3.256340000007185,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:31.959317",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 58.15340600020136,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:32.324559",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 59.94987499980198,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:32.445804",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 174.83042800085968,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:32.890635",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 52.147836999210995,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:33.412367",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 59.68364699947415,
+      "response_length": 3040,
+      "timestamp": "2026-01-20T21:27:33.577873",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 212.6676670013694,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:33.896084",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 107.69849500138662,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:33.896697",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 165.2964900004008,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:34.132482",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 110.88682800073002,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:34.183549",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 4.3308099993737414,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:34.277384",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.541749000534764,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:34.410511",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.776153000217164,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:34.730291",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 163.24669800087577,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:35.096293",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.008096999314148,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:35.342281",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 5.750311998781399,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:35.507570",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 327.90114999988873,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:36.241199",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 384.3595529997401,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:36.394942",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 260.8075869993627,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:36.395728",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 56.681768000999,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:36.468704",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 39.28950400040776,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:36.469098",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 54.15189300038037,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:36.584750",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 18.411904999084072,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:36.585270",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.8277599996945355,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:36.656404",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.4841470003593713,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:36.689268",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 173.948695000945,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:37.342623",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 164.79237900057342,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:38.194992",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 62.495641999703366,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:38.567423",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 25.814917999014142,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:38.567922",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 204.55004399991594,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:38.883860",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 182.5579669985018,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:38.884472",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 177.38745699898573,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:39.072090",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 59.91106799956469,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:39.141366",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.022406999662053,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:39.439194",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 98.83025300041481,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:39.548302",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.151309000008041,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:39.917761",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.391749000205891,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:40.338459",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 170.066434000546,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:40.511807",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 166.31545600102982,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:40.512250",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 7.654424000065774,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:40.847285",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 171.6395460007334,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:41.272783",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 4.1069830003834795,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:41.281153",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.308728999196319,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:41.319710",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.8186389990878524,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:41.654908",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 59.795174000100815,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:41.729938",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 84.6831620001467,
+      "response_length": 3038,
+      "timestamp": "2026-01-20T21:27:41.821392",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 57.55439099993964,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:41.930008",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.64548899960937,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:42.442567",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 3.2444970001961337,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:42.510097",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.04709399995045,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:42.841027",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 7.423199000186287,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:43.146740",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.73067400130094,
+      "response_length": 3044,
+      "timestamp": "2026-01-20T21:27:43.411107",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 58.245095000529545,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:43.459477",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 273.34015099950193,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:44.133805",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 264.4814570012386,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:44.134845",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 239.38490399996226,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:44.135523",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 436.1600020001788,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:44.740478",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 219.86219700011134,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:44.741486",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 90.29444600128045,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:44.741806",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 5.6160499989346135,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:44.842904",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.12302999907115,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:45.412554",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 99.87908299990522,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:45.461628",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 62.25932500092313,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:45.513425",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 92.66437100086478,
+      "response_length": 3040,
+      "timestamp": "2026-01-20T21:27:45.514482",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 159.86930300095992,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:45.949323",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 60.53397400137328,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:46.061309",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 60.77554900002724,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:46.243727",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 164.47287299888558,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:47.036811",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 4.380918000606471,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:47.091547",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 5.6186820002039894,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:47.146429",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.94606499935617,
+      "response_length": 773,
+      "timestamp": "2026-01-20T21:27:47.396238",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 271.4442380001856,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:47.770090",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 164.02275300060865,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:47.770413",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.7452720007422613,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:48.028293",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 174.9706150003476,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:48.522150",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 72.22941100008029,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:48.522576",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.715352000450366,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:48.740944",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.87691200080735,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:48.973451",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 3.749905999939074,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:48.987459",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.071842999110231,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:49.218663",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 60.13425399942207,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:49.301101",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 25.955196000722935,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:49.301736",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.183986000178265,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:49.582668",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.88263299896789,
+      "response_length": 3037,
+      "timestamp": "2026-01-20T21:27:50.174733",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 331.5182049991563,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:50.586660",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 375.13334399955056,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:50.643508",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 327.47957699939434,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:50.643622",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 230.32053300084954,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:50.694714",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 81.88575399981346,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:50.697319",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 315.8539359992574,
+      "response_length": 3044,
+      "timestamp": "2026-01-20T21:27:50.697406",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.6980930015270133,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:50.999135",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.748021998238983,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:51.466255",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.4473339999531163,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:51.488993",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 64.17543000134174,
+      "response_length": 777,
+      "timestamp": "2026-01-20T21:27:51.888698",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 51.889491000110866,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:52.800858",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 58.412128000782104,
+      "response_length": 3044,
+      "timestamp": "2026-01-20T21:27:52.850727",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 156.86943699984113,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:27:53.152288",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 65.89836899911461,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:53.152755",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 55.92549399989366,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:53.352380",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.075521999766352,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:53.466987",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 55.74916700061294,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:53.543041",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.409081000223523,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:53.552711",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.3591819992579985,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:53.850159",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.5260940001317067,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:53.870958",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 162.87462699983735,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:54.226519",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 57.47305300064909,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:54.327330",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 48.35267999987991,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:27:54.604409",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.829421999194892,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:54.725605",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.32001300000411,
+      "response_length": 776,
+      "timestamp": "2026-01-20T21:27:55.023853",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 4.832164999243105,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:55.208493",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 5.193840001084027,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:55.731071",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 58.57478100006119,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:56.057992",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 59.733329000664526,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:56.250369",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 5.0471909999032505,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:56.466130",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 106.53346599974611,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:27:56.839431",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 109.72585000126855,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:27:56.841173",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.817594999622088,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:57.169178",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.294337999454001,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:57.365197",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 56.04046400003426,
+      "response_length": 3038,
+      "timestamp": "2026-01-20T21:27:57.631932",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 4.595722000885871,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:57.731008",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.544657000020379,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:57.770900",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.607003000070108,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:57.829561",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.686907000679639,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:57.918151",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 52.42065700076637,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:27:58.408713",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 60.626167000009445,
+      "response_length": 3039,
+      "timestamp": "2026-01-20T21:27:59.193375",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 2.4760470005276147,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:27:59.205138",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 53.572554999846034,
+      "response_length": 3035,
+      "timestamp": "2026-01-20T21:27:59.403102",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.6970689996232977,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:59.565214",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 5.489932998898439,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:27:59.740286",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.1911570001975633,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:27:59.752777",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 184.61777999982587,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:27:59.981698",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.6653810000425437,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:00.193148",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 163.763728000049,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:00.864420",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 85.95727300053113,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:00.865129",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 105.55110499990406,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:00.865548",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 164.38355799982673,
+      "response_length": 3034,
+      "timestamp": "2026-01-20T21:28:01.314715",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 119.90102900017519,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:01.315153",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 169.481843999165,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:01.679424",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.260462999809533,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:28:01.691933",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.845359999104403,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:02.076114",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 213.62646399938967,
+      "response_length": 3037,
+      "timestamp": "2026-01-20T21:28:02.342106",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 192.32882899996184,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:02.343241",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 157.242008999674,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:02.692171",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 54.24673299967253,
+      "response_length": 775,
+      "timestamp": "2026-01-20T21:28:02.822716",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/health",
+      "response_time": 3.9690789999440312,
+      "response_length": 117,
+      "timestamp": "2026-01-20T21:28:02.852061",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 331.5159590001713,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:03.203860",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 218.47337300096115,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:03.205656",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 129.70892200064554,
+      "response_length": 3041,
+      "timestamp": "2026-01-20T21:28:03.253520",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 61.57085800077766,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:03.536966",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 63.738139000633964,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:03.924584",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.6897150000877446,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:04.091043",
+      "success": true
+    },
+    {
+      "type": "POST",
+      "name": "/predicciones/E001",
+      "response_time": 57.84001299980446,
+      "response_length": 778,
+      "timestamp": "2026-01-20T21:28:04.702597",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.173951999997371,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:04.780132",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 60.570189998543356,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:04.940227",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.614159000586369,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:05.112445",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.365049000218278,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:05.161118",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 463.6481699999422,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:05.649128",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 542.2822370001086,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:05.808056",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses/E001/historico?limit=100",
+      "response_time": 203.68346299983386,
+      "response_length": 396326,
+      "timestamp": "2026-01-20T21:28:05.808866",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 532.0658629989339,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:05.808952",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.6362999999255408,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:06.081493",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 2.265457000248716,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:06.082394",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 3.4316300007048994,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:07.274904",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 110.64337900097598,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:07.547147",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/embalses",
+      "response_time": 104.03835599936428,
+      "response_length": 10658,
+      "timestamp": "2026-01-20T21:28:07.547883",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/dashboard/kpis",
+      "response_time": 85.74815899919486,
+      "response_length": 218,
+      "timestamp": "2026-01-20T21:28:07.548227",
+      "success": true
+    },
+    {
+      "type": "GET",
+      "name": "/recomendaciones/E001",
+      "response_time": 4.7019419998832745,
+      "response_length": 1485,
+      "timestamp": "2026-01-20T21:28:07.630215",
+      "success": true
+    }
+  ],
+  "errors": []
+}

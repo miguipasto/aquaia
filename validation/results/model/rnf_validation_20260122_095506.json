@@ -1,0 +1,77 @@
+{
+  "timestamp": "20260122_095506",
+  "model": "20260114_193518",
+  "config": {
+    "LOOKBACK": 360,
+    "HORIZON": 180,
+    "BATCH_SIZE": 32,
+    "LR": 0.001,
+    "WEIGHT_DECAY": 0.001,
+    "HIDDEN_SIZE": 64,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.4,
+    "FEATURES": 22,
+    "SIGMA_FORECAST": 0.02,
+    "HIST_COLS": [
+      "nivel",
+      "precipitacion",
+      "temperatura",
+      "caudal_promedio",
+      "tmed",
+      "prec",
+      "tmin",
+      "tmax",
+      "hr_media",
+      "velmedia",
+      "racha"
+    ]
+  },
+  "rnf2_training": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "Ratio Overfitting (val/train)",
+        "value": 0.8123,
+        "threshold": "\u2264 1.2",
+        "status": "PASS"
+      },
+      {
+        "name": "Gap de Convergencia",
+        "value": "3.78%",
+        "threshold": "< 5%",
+        "status": "PASS"
+      },
+      {
+        "name": "Estabilidad (CV \u00faltimas 10 \u00e9pocas)",
+        "value": "2.76%",
+        "threshold": "< 10%",
+        "status": "PASS"
+      }
+    ]
+  },
+  "rnf1_prediction": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "RMSE Normalizado",
+        "value": 0.1444,
+        "note": "Error en escala [0,1]",
+        "status": "INFO"
+      },
+      {
+        "name": "R\u00b2 Estimado",
+        "value": 0.9792,
+        "threshold": "\u2265 0.95",
+        "status": "PASS",
+        "note": "Estimaci\u00f3n basada en MSE loss"
+      }
+    ],
+    "note": "M\u00e9tricas estimadas desde val_loss (MSE). Para validaci\u00f3n completa usar test_precision.py"
+  },
+  "thresholds": {
+    "r2_min": 0.95,
+    "rmse_max": 1.903,
+    "mae_target": 1.5,
+    "overfitting_ratio_max": 1.2
+  }
+}
