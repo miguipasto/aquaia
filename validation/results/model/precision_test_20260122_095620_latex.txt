@@ -1,0 +1,35 @@
+% Tabla: Resultados detallados por embalse (Horizonte promedio 180 días)
+\begin{table}[h]
+\centering
+\caption{Rendimiento detallado por embalse en el conjunto de test}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Código} & \textbf{MAE (hm$^3$)} & \textbf{RMSE (hm$^3$)} & \textbf{$R^2$} & \textbf{Capacidad (hm$^3$)} & \textbf{Error Rel (\%)} \\
+\midrule
+E036 & 1.96 & 2.60 & 0.31 & 915 & 0.21 \\
+E035 & 1.75 & 2.22 & 0.07 & 549 & 0.32 \\
+E350 & 1.48 & 1.77 & 0.16 & 525 & 0.28 \\
+\midrule
+\textbf{Promedio} & 1.73 & 2.20 & 0.18 & 663.0 & 0.27 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% Tabla: Resultados por horizonte temporal
+\begin{table}[h]
+\centering
+\caption{Rendimiento por horizonte de predicción}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Horizonte (días)} & \textbf{MAE (hm$^3$)} & \textbf{RMSE (hm$^3$)} & \textbf{$R^2$} \\
+\midrule
+Día 7 & 0.56 & 0.59 & 0.92 \\
+Día 30 & 1.48 & 1.96 & 0.17 \\
+Día 90 & 1.64 & 2.08 & 0.32 \\
+Día 180 & 3.26 & 4.16 & -0.67 \\
+\midrule
+\textbf{Promedio (0-180)} & 1.73 & 2.20 & 0.18 \\
+\bottomrule
+\end{tabular}
+\end{table}

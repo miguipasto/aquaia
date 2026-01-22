@@ -1,0 +1,13 @@
+% Tiempos de generación de informes
+\begin{table}[h]
+\centering
+\caption{Tiempos de generación de informes}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Tipo Informe} & \textbf{Tiempo (s)} & \textbf{Tamaño (KB)} & \textbf{HTML Válido} \\
+\midrule
+Diario & --- & --- & Error: HTTP 500 \\
+Semanal & --- & --- & Error: HTTP 500 \\
+\bottomrule
+\end{tabular}
+\end{table}

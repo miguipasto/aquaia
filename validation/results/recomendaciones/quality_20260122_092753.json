@@ -1,0 +1,47 @@
+[
+  {
+    "codigo": "E001",
+    "nivel_riesgo": "MODERADO",
+    "fuente": "llm",
+    "estructura_valida": true,
+    "estructura_issues": [],
+    "motivo_quality_score": 1.0,
+    "motivo_issues": [],
+    "accion_quality_score": 1.0,
+    "accion_issues": [],
+    "datos_alineados": true,
+    "alignment_issues": [],
+    "usa_llm": true,
+    "timestamp": "2026-01-22T09:27:51.488938"
+  },
+  {
+    "codigo": "E002",
+    "nivel_riesgo": "ALTO",
+    "fuente": "llm",
+    "estructura_valida": true,
+    "estructura_issues": [],
+    "motivo_quality_score": 1.0,
+    "motivo_issues": [],
+    "accion_quality_score": 1.0,
+    "accion_issues": [],
+    "datos_alineados": true,
+    "alignment_issues": [],
+    "usa_llm": true,
+    "timestamp": "2026-01-22T09:27:52.661227"
+  },
+  {
+    "codigo": "E003",
+    "nivel_riesgo": "ALTO",
+    "fuente": "llm",
+    "estructura_valida": true,
+    "estructura_issues": [],
+    "motivo_quality_score": 1.0,
+    "motivo_issues": [],
+    "accion_quality_score": 1.0,
+    "accion_issues": [],
+    "datos_alineados": true,
+    "alignment_issues": [],
+    "usa_llm": true,
+    "timestamp": "2026-01-22T09:27:53.736711"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "tipo": "diario",
+    "tiempo_segundos": 47.408761978149414,
+    "tamano_bytes": 62659,
+    "html_valido": true,
+    "html_issues": [],
+    "title": "Informe Diario - Belesar",
+    "contenido_length": 3167,
+    "informe_id": "INF_DIARIO_E001_20260121_171816",
+    "success": true
+  },
+  {
+    "tipo": "semanal",
+    "tiempo_segundos": 57.29253172874451,
+    "tamano_bytes": 141886,
+    "html_valido": true,
+    "html_issues": [],
+    "title": "Informe Semanal - Belesar",
+    "contenido_length": 8146,
+    "informe_id": "INF_SEMANAL_E001_20260121_171906",
+    "success": true
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "tipo": "diario",
+    "tiempo_segundos": 45.72490978240967,
+    "success": false,
+    "error": "HTTP 500"
+  },
+  {
+    "tipo": "semanal",
+    "tiempo_segundos": 64.37827968597412,
+    "success": false,
+    "error": "HTTP 500"
+  }
+]

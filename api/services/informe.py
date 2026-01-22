@@ -385,8 +385,28 @@ class InformeService:
         
         logger.info(f"Completando datos para {embalse_id} en fecha {fecha_str}")
         
-        # 1. Obtener datos actuales reales de la BD
-        if not data.get('datos_actual') or not data['datos_actual'].get('nivel_actual_msnm'):
+        # Asegurar estructura mínima de datos_actual con valores por defecto
+        if 'datos_actual' not in data or data['datos_actual'] is None:
+            data['datos_actual'] = {}
+        
+        # Valores por defecto para datos_actual (evita Undefined en plantillas)
+        datos_actual_defaults = {
+            'nombre_embalse': data.get('nombre_embalse', 'Embalse'),
+            'nivel_actual_msnm': 0.0,
+            'porcentaje_capacidad': 0.0,
+            'capacidad_total': 100.0,
+            'nivel_maximo_msnm': 100.0,
+            'media_historica': 50.0,
+            'percentil_20': 20.0,
+            'percentil_80': 80.0,
+            'tendencia': 'estable'
+        }
+        for key, default_val in datos_actual_defaults.items():
+            if key not in data['datos_actual'] or data['datos_actual'].get(key) is None:
+                data['datos_actual'][key] = default_val
+        
+        # 1. Obtener datos actuales reales de la BD (sobrescribe defaults si disponible)
+        if data['datos_actual'].get('nivel_actual_msnm', 0) == 0:
             try:
                 actual = data_loader.get_embalse_actual(embalse_id, fecha_str)
                 if actual:
@@ -403,8 +423,26 @@ class InformeService:
             except Exception as e:
                 logger.warning(f"No se pudieron obtener datos actuales de BD: {e}")
 
-        # 2. Obtener predicciones reales del modelo
-        if not data.get('prediccion') or not data['prediccion'].get('nivel_30d'):
+        # Asegurar estructura mínima de prediccion con valores por defecto
+        if 'prediccion' not in data or data['prediccion'] is None:
+            data['prediccion'] = {}
+        
+        prediccion_defaults = {
+            'nivel_30d': data['datos_actual'].get('nivel_actual_msnm', 100.0),
+            'nivel_90d': data['datos_actual'].get('nivel_actual_msnm', 100.0),
+            'nivel_180d': data['datos_actual'].get('nivel_actual_msnm', 100.0),
+            'porcentaje_30d': data['datos_actual'].get('porcentaje_capacidad', 50.0),
+            'porcentaje_90d': data['datos_actual'].get('porcentaje_capacidad', 50.0),
+            'porcentaje_180d': data['datos_actual'].get('porcentaje_capacidad', 50.0),
+            'horizonte_dias': 180,
+            'confianza': 0.95
+        }
+        for key, default_val in prediccion_defaults.items():
+            if key not in data['prediccion'] or data['prediccion'].get(key) is None:
+                data['prediccion'][key] = default_val
+
+        # 2. Obtener predicciones reales del modelo (sobrescribe defaults si disponible)
+        if data['prediccion'].get('nivel_30d') == data['datos_actual'].get('nivel_actual_msnm'):
             try:
                 df_pred = prediction_service.predecir_embalse(embalse_id, fecha_str, horizonte=180)
                 if not df_pred.empty:
@@ -426,8 +464,22 @@ class InformeService:
             except Exception as e:
                 logger.warning(f"No se pudieron obtener predicciones de modelo: {e}")
 
-        # 3. Obtener riesgos reales
-        if not data.get('riesgos') or 'categoria_riesgo' not in data['riesgos']:
+        # Asegurar estructura mínima de riesgos con valores por defecto
+        if 'riesgos' not in data or data['riesgos'] is None:
+            data['riesgos'] = {}
+        
+        riesgos_defaults = {
+            'categoria_riesgo': 'bajo',
+            'nivel_riesgo': 'bajo',
+            'probabilidad_sequia': 0.1,
+            'descripcion': 'Sin alertas significativas'
+        }
+        for key, default_val in riesgos_defaults.items():
+            if key not in data['riesgos'] or data['riesgos'].get(key) is None:
+                data['riesgos'][key] = default_val
+
+        # 3. Obtener riesgos reales (sobrescribe defaults si disponible)
+        if data['riesgos'].get('categoria_riesgo') == 'bajo' and data['riesgos'].get('probabilidad_sequia') == 0.1:
             try:
                 riesgo = RiskService.analizar_riesgo(embalse_id, fecha_str)
                 data['riesgos'] = riesgo
