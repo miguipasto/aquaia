@@ -1,0 +1,19 @@
+\begin{table}[h]
+\centering
+\caption{Latencia de endpoints de la API (ms)}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Endpoint} & \textbf{Media} & \textbf{P95} & \textbf{P99} & \textbf{Éxito (\%)} \\
+\midrule
+Health Check & 5.08 & 8.71 & 8.77 & 100.0 \\
+Listado Embalses & 4.30 & 5.23 & 5.24 & 100.0 \\
+Histórico Embalse (E001) & 171.39 & 276.50 & 277.53 & 100.0 \\
+Predicción 7 días & 67.99 & 162.92 & 163.55 & 100.0 \\
+Predicción 30 días & 61.32 & 143.17 & 147.14 & 100.0 \\
+Predicción 180 días & 71.17 & 156.17 & 156.25 & 100.0 \\
+Dashboard KPIs & 62.60 & 68.73 & 68.74 & 100.0 \\
+Recomendación GET & 5.63 & 9.10 & 9.14 & 100.0 \\
+Recomendación POST & 165.24 & 361.34 & 366.31 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{table}

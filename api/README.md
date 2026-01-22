@@ -1,6 +1,6 @@
-# API - AquaAI Backend
+# API - AquaIA Backend
 
-API REST para predicción de niveles de embalses usando LSTM Seq2Seq con datos meteorológicos.
+API REST completa para predicción de niveles de embalses usando LSTM Seq2Seq con datos meteorológicos AEMET, generación de recomendaciones inteligentes con LLM y creación automática de informes.
 
 ## Requisitos
 
@@ -54,15 +54,61 @@ Documentación API: http://localhost:8000/docs
 
 ## Endpoints Principales
 
-- `/health` - Estado del sistema
-- `/embalses` - Lista de embalses
-- `/predicciones/{codigo}` - Predicciones LSTM
-- `/recomendaciones/{codigo}` - Recomendaciones operativas
-- `/dashboard/kpis` - KPIs del sistema
+### Core
+- `GET /health` - Estado del sistema (modelo, BD, LLM)
+- `GET /embalses` - Lista de embalses disponibles
+- `GET /embalses/{codigo}/historico` - Histórico de datos
+
+### Predicciones
+- `POST /predicciones/{codigo}` - Predicciones LSTM (horizonte configurable)
+- `GET /predicciones/{codigo}/estado` - Estado actual del embalse
+
+### Recomendaciones
+- `GET /recomendaciones/{codigo}` - Recomendación operativa (con caché)
+- `POST /recomendaciones/{codigo}` - Forzar nueva recomendación
+
+### Informes
+- `POST /informes/{codigo}/generar` - Generar informe (diario/semanal)
+- `GET /informes/{codigo}/listar` - Listar informes generados
+- `GET /informes/{codigo}/descargar/{informe_id}` - Descargar informe HTML
+
+### Dashboard
+- `GET /dashboard/kpis` - KPIs agregados del sistema
+- `GET /dashboard/alertas` - Alertas activas
+
+### Evaluación
+- `POST /evaluaciones/precision` - Evaluar precisión del modelo
+- `POST /evaluaciones/comparar` - Comparar configuraciones
+
+## Estructura de Servicios
+
+```
+api/
+├── services/
+│   ├── prediction.py      # Predicciones LSTM
+│   ├── recomendacion.py   # Generación de recomendaciones
+│   ├── llm_service.py     # Integración con Ollama
+│   ├── informe.py         # Generación de informes HTML
+│   └── risk.py            # Evaluación de riesgos
+├── routers/
+│   ├── dashboard.py       # Endpoints dashboard
+│   ├── evaluaciones.py    # Endpoints evaluación
+│   ├── informes.py        # Endpoints informes
+│   └── recomendaciones.py # Endpoints recomendaciones
+├── middleware/
+│   ├── cache.py           # Sistema de caché
+│   ├── rate_limit.py      # Rate limiting
+│   └── security.py        # Headers seguridad
+└── templates/
+    ├── informe_diario_template.html
+    └── informe_semanal_template.html
+```
 
 ## Tecnologías
 
-- FastAPI
-- PyTorch (LSTM)
-- PostgreSQL
-- Ollama (LLM)
+- FastAPI 0.115+
+- PyTorch 2.5+ (LSTM Seq2Vec)
+- PostgreSQL con psycopg2
+- Ollama (LLM Phi-3.5)
+- Jinja2 (plantillas HTML)
+- Pydantic (validación)

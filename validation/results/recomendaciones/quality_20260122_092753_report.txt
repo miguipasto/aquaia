@@ -1,0 +1,12 @@
+INFORME DE CALIDAD DE RECOMENDACIONES
+============================================================
+
+Total de recomendaciones evaluadas: 3
+
+Estructuras válidas: 3/3 (100.0%)
+Datos alineados: 3/3 (100.0%)
+Calidad alta (>0.7): 3/3 (100.0%)
+Uso de LLM: 3/3 (100.0%)
+
+ISSUES DETECTADOS:
+------------------------------------------------------------

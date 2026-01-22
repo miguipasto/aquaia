@@ -39,6 +39,19 @@ docker-compose down
 psql -h localhost -p 8432 -U usr_aquaia -d aquaia
 ```
 
+## Esquema de Base de Datos
+
+El esquema incluye las siguientes tablas principales:
+
+- **embalses**: Catálogo de embalses (código, nombre, capacidad, ubicación)
+- **datos_historicos**: Series temporales de niveles y variables
+- **predicciones**: Predicciones generadas por el modelo
+- **recomendaciones**: Recomendaciones operativas con histórico
+- **tipos_riesgo**: Catálogo de niveles de riesgo
+- **umbrales_embalse**: Umbrales configurables por embalse
+- **llm_cache_recomendaciones**: Caché de respuestas LLM
+- **informes**: Registro de informes generados
+
 ## Migración Inicial
 
 El esquema se carga automáticamente desde `init.sql` en el primer arranque.
@@ -46,7 +59,7 @@ El esquema se carga automáticamente desde `init.sql` en el primer arranque.
 Para aplicar migraciones adicionales:
 
 ```bash
-psql -h localhost -p 8432 -U usr_aquaia -d aquaia -f migration_llm_cache.sql
+psql -h localhost -p 8432 -U usr_aquaia -d aquaia -f migration.sql
 ```
 
 ## Backup

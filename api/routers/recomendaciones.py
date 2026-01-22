@@ -104,6 +104,7 @@ async def obtener_recomendacion_embalse(
     fecha_inicio: Optional[str] = Query(None, description="Fecha de inicio para simulación (YYYY-MM-DD). Si no se especifica, usa la fecha actual del sistema."),
     horizonte_dias: Optional[int] = Query(None, ge=1, le=180, description="Horizonte de predicción en días. Si es None, usa la configuración del embalse (defecto: 7)."),
     forzar_regeneracion: bool = Query(False, description="Si True, regenera la recomendación aunque exista una reciente en caché."),
+    esperar_ia: bool = Query(False, description="Si True y la IA está habilitada, espera a que se genere la recomendación con IA antes de responder."),
     background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     """Genera o recupera recomendación operativa para un embalse."""
@@ -139,30 +140,41 @@ async def obtener_recomendacion_embalse(
             )
             return recomendacion
         
-        # Si la IA está habilitada, generar en background
-        logger.info(f"Scheduling AI recommendation in background for {codigo_saih}")
-        background_tasks.add_task(
-            generar_recomendacion_background_router,
-            codigo_saih,
-            fecha_inicio_date,
-            horizonte_dias,
-            forzar_regeneracion
-        )
-        
-        # Devolver recomendación básica inmediata (sin IA, rápido)
-        # Deshabilitamos temporalmente la IA para esta llamada
-        enable_llm_original = settings.enable_llm_recomendaciones
-        settings.enable_llm_recomendaciones = False
-        try:
-            recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
-                codigo_saih=codigo_saih,
-                fecha_inicio=fecha_inicio_date,
-                horizonte=horizonte_dias,
-                forzar_regeneracion=True
+        # Si la IA está habilitada y no se pide esperar, generar en background
+        if settings.enable_llm_recomendaciones and not esperar_ia:
+            logger.info(f"Scheduling AI recommendation in background for {codigo_saih}")
+            background_tasks.add_task(
+                generar_recomendacion_background_router,
+                codigo_saih,
+                fecha_inicio_date,
+                horizonte_dias,
+                forzar_regeneracion
             )
-        finally:
-            settings.enable_llm_recomendaciones = enable_llm_original
+            
+            # Devolver recomendación básica inmediata (sin IA, rápido)
+            # Deshabilitamos temporalmente la IA para esta llamada
+            enable_llm_original = settings.enable_llm_recomendaciones
+            settings.enable_llm_recomendaciones = False
+            try:
+                recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
+                    codigo_saih=codigo_saih,
+                    fecha_inicio=fecha_inicio_date,
+                    horizonte=horizonte_dias,
+                    forzar_regeneracion=forzar_regeneracion
+                )
+            finally:
+                settings.enable_llm_recomendaciones = enable_llm_original
+            
+            return recomendacion
         
+        # Si no hay IA habilitada O se pide esperar, generar síncrono
+        logger.info(f"Generating recommendation (wait_ai={esperar_ia}) for {codigo_saih}")
+        recomendacion = await recomendacion_service.evaluar_riesgo_embalse(
+            codigo_saih=codigo_saih,
+            fecha_inicio=fecha_inicio_date,
+            horizonte=horizonte_dias,
+            forzar_regeneracion=forzar_regeneracion
+        )
         return recomendacion
         
     except ValueError as e:

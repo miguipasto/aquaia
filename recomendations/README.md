@@ -63,7 +63,18 @@ En el archivo `.env` de la API, configurar:
 OLLAMA_URL=http://localhost:11434
 OLLAMA_MODEL=phi3.5:latest
 ENABLE_LLM_RECOMENDACIONES=True
+LLM_TIMEOUT=30
+LLM_TEMPERATURE=0.7
 ```
+
+## Configuración de Prompts
+
+Los prompts del sistema se configuran en `api/services/llm_service.py`:
+
+- **Recomendaciones**: Prompt estructurado con datos del embalse
+- **Informes**: Prompt de resumen ejecutivo
+- **Formato**: JSON obligatorio para parseo automático
+- **Validación**: Verificación de estructura y coherencia
 
 ## Testing
 

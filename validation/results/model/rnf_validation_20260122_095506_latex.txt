@@ -1,0 +1,19 @@
+% Tabla de Validación de Requisitos No Funcionales
+% Generado: 20260122_095506
+
+\begin{table}[h]
+\centering
+\caption{Validación de Requisitos No Funcionales del Modelo}
+\begin{tabular}{llccc}
+\toprule
+\textbf{RNF} & \textbf{Métrica} & \textbf{Valor} & \textbf{Umbral} & \textbf{Estado} \\
+\midrule
+RNF2 & Ratio Overfitting (val/train) & 0.8123 & ≤ 1.2 & \checkmark \\
+RNF2 & Gap de Convergencia & 3.78% & < 5% & \checkmark \\
+RNF2 & Estabilidad (CV últimas 10 épocas) & 2.76% & < 10% & \checkmark \\
+\midrule
+RNF1 & R² Estimado & 0.9792 & ≥ 0.95 & \checkmark \\
+\bottomrule
+\end{tabular}
+\label{tab:validacion_rnf}
+\end{table}

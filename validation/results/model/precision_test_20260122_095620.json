@@ -1,0 +1,122 @@
+[
+  {
+    "codigo": "E036",
+    "horizonte": 7,
+    "mae": 0.4839552153859824,
+    "rmse": 0.5063948884930289,
+    "r2": 0.9763878661905397,
+    "capacidad": 915.0,
+    "error_relativo_pct": 0.05289128037005272,
+    "n_predictions": 21
+  },
+  {
+    "codigo": "E036",
+    "horizonte": 30,
+    "mae": 1.3022867347002034,
+    "rmse": 1.8855904124226386,
+    "r2": 0.3957560226764112,
+    "capacidad": 915.0,
+    "error_relativo_pct": 0.1423264190929184,
+    "n_predictions": 90
+  },
+  {
+    "codigo": "E036",
+    "horizonte": 90,
+    "mae": 1.8706215609187486,
+    "rmse": 2.385081982493924,
+    "r2": 0.6577755498590474,
+    "capacidad": 915.0,
+    "error_relativo_pct": 0.20443951485450804,
+    "n_predictions": 268
+  },
+  {
+    "codigo": "E036",
+    "horizonte": 180,
+    "mae": 4.201100578598934,
+    "rmse": 5.638020948706195,
+    "r2": -0.7800138123465108,
+    "capacidad": 915.0,
+    "error_relativo_pct": 0.4591366752567142,
+    "n_predictions": 538
+  },
+  {
+    "codigo": "E035",
+    "horizonte": 7,
+    "mae": 0.48786929175970445,
+    "rmse": 0.5170491695886382,
+    "r2": 0.9489068855482196,
+    "capacidad": 549.0,
+    "error_relativo_pct": 0.08886508046624854,
+    "n_predictions": 21
+  },
+  {
+    "codigo": "E035",
+    "horizonte": 30,
+    "mae": 1.429612425009418,
+    "rmse": 1.8737538887454483,
+    "r2": 0.04086166700125682,
+    "capacidad": 549.0,
+    "error_relativo_pct": 0.26040299180499415,
+    "n_predictions": 90
+  },
+  {
+    "codigo": "E035",
+    "horizonte": 90,
+    "mae": 1.407399350885127,
+    "rmse": 1.8675605993897983,
+    "r2": 0.2676154992551939,
+    "capacidad": 549.0,
+    "error_relativo_pct": 0.2563568945145951,
+    "n_predictions": 268
+  },
+  {
+    "codigo": "E035",
+    "horizonte": 180,
+    "mae": 3.6690755045901335,
+    "rmse": 4.61354401472601,
+    "r2": -0.9618820462109676,
+    "capacidad": 549.0,
+    "error_relativo_pct": 0.6683197640419186,
+    "n_predictions": 538
+  },
+  {
+    "codigo": "E350",
+    "horizonte": 7,
+    "mae": 0.6940997990539992,
+    "rmse": 0.7568332699269114,
+    "r2": 0.8213254423838621,
+    "capacidad": 525.0,
+    "error_relativo_pct": 0.1322094855340951,
+    "n_predictions": 21
+  },
+  {
+    "codigo": "E350",
+    "horizonte": 30,
+    "mae": 1.7002965375317534,
+    "rmse": 2.1098649434049235,
+    "r2": 0.07462839581357605,
+    "capacidad": 525.0,
+    "error_relativo_pct": 0.3238660071489054,
+    "n_predictions": 90
+  },
+  {
+    "codigo": "E350",
+    "horizonte": 90,
+    "mae": 1.6333513801760213,
+    "rmse": 1.9732868397073722,
+    "r2": 0.025482622835865443,
+    "capacidad": 525.0,
+    "error_relativo_pct": 0.31111454860495646,
+    "n_predictions": 270
+  },
+  {
+    "codigo": "E350",
+    "horizonte": 180,
+    "mae": 1.8978465664408943,
+    "rmse": 2.238835543871619,
+    "r2": -0.27307383970916566,
+    "capacidad": 525.0,
+    "error_relativo_pct": 0.3614945840839799,
+    "n_predictions": 540
+  }
+]
