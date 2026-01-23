@@ -10,7 +10,7 @@ import api from '../lib/api'
  */
 export const getKPIs = async (fechaReferencia = null) => {
   const params = fechaReferencia ? { fecha_referencia: fechaReferencia } : {}
-  const response = await api.get('/dashboard/kpis', { params })
+  const response = await api.get('/api/dashboard/kpis', { params })
   return response.data
 }
 
@@ -21,7 +21,7 @@ export const getKPIs = async (fechaReferencia = null) => {
  */
 export const getEmbalseActual = async (codigoSaih, fechaReferencia = null) => {
   const params = fechaReferencia ? { fecha_referencia: fechaReferencia } : {}
-  const response = await api.get(`/dashboard/embalses/${codigoSaih}/actual`, { params })
+  const response = await api.get(`/api/dashboard/embalses/${codigoSaih}/actual`, { params })
   return response.data
 }
 
@@ -30,7 +30,7 @@ export const getEmbalseActual = async (codigoSaih, fechaReferencia = null) => {
  * @param {Object} filters - Filtros opcionales (fecha_referencia, severidad, tipo, demarcacion)
  */
 export const getAlertas = async (filters = {}) => {
-  const response = await api.get('/dashboard/alertas', { params: filters })
+  const response = await api.get('/api/dashboard/alertas', { params: filters })
   return response.data
 }
 
@@ -40,7 +40,7 @@ export const getAlertas = async (filters = {}) => {
  */
 export const getEmbalses = async (fechaReferencia = null) => {
   const params = fechaReferencia ? { fecha_referencia: fechaReferencia } : {}
-  const response = await api.get('/embalses', { params })
+  const response = await api.get('/api/embalses', { params })
   return response.data
 }
 
@@ -65,7 +65,7 @@ export const getHistorico = async (codigoSaih, startDate = null, endDate = null)
  * @param {Object} data - Datos de la predicción (fecha_inicio, horizonte_dias)
  */
 export const generarPrediccion = async (codigoSaih, data) => {
-  const response = await api.post(`/predicciones/${codigoSaih}`, data)
+  const response = await api.post(`/api/predicciones/${codigoSaih}`, data)
   return response.data
 }
 
@@ -80,7 +80,7 @@ export const getRecomendacion = async (codigoSaih, fechaInicio = null, horizonte
   if (fechaInicio) params.fecha_inicio = fechaInicio
   if (horizonteDias) params.horizonte_dias = horizonteDias
   
-  const response = await api.get(`/recomendaciones/${codigoSaih}`, { params })
+  const response = await api.get(`/api/recomendaciones/${codigoSaih}`, { params })
   return response.data
 }
 
@@ -105,7 +105,7 @@ export const getDemarcaciones = async () => {
  * Verifica el estado del servicio LLM (Ollama)
  */
 export const getLLMSalud = async () => {
-  const response = await api.get('/recomendaciones/llm/salud')
+  const response = await api.get('/api/recomendaciones/llm/salud')
   return response.data
 }
 
@@ -113,7 +113,7 @@ export const getLLMSalud = async () => {
  * Obtiene estadísticas de uso del LLM
  */
 export const getLLMEstadisticas = async () => {
-  const response = await api.get('/recomendaciones/llm/estadisticas')
+  const response = await api.get('/api/recomendaciones/llm/estadisticas')
   return response.data
 }
 
@@ -123,6 +123,6 @@ export const getLLMEstadisticas = async () => {
  * @param {Object} data - Datos opcionales (fecha_inicio, horizonte_dias)
  */
 export const generarRecomendacionForzada = async (codigoSaih, data = {}) => {
-  const response = await api.post(`/recomendaciones/${codigoSaih}`, data)
+  const response = await api.post(`/api/recomendaciones/${codigoSaih}`, data)
   return response.data
 }

@@ -70,7 +70,7 @@ class AquaIAUser(HttpUser):
     @task(2)
     def predict_short(self):
         self.client.post(
-            "/predicciones/E001",
+            "/api/predicciones/E001",
             json={"fecha_inicio": "2024-06-01", "horizonte_dias": 7}
         )
     
@@ -78,19 +78,19 @@ class AquaIAUser(HttpUser):
     def predict_medium(self):
         """Predicción a medio plazo (30 días)."""
         self.client.post(
-            "/predicciones/E001",
+            "/api/predicciones/E001",
             json={"fecha_inicio": "2024-06-01", "horizonte_dias": 30}
         )
     
     @task(2)
     def get_dashboard_kpis(self):
         """Obtiene KPIs del dashboard."""
-        self.client.get("/dashboard/kpis")
+        self.client.get("/api/dashboard/kpis")
     
     @task(1)
     def get_recomendacion(self):
         """Obtiene recomendación para un embalse."""
-        self.client.get("/recomendaciones/E001")
+        self.client.get("/api/recomendaciones/E001")
     
     @task(1)
     def health_check(self):

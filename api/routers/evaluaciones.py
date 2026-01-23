@@ -18,7 +18,7 @@ from ..data import db_connection
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/evaluaciones",
+    prefix="/api/evaluaciones",
     tags=["Evaluaciones"],
     responses={
         500: {"description": "Error del servidor"}

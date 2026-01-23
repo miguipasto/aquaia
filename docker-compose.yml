@@ -1,0 +1,214 @@
+# AquaAI - Plataforma de Gestión Inteligente de Embalses
+# Docker Compose completo para el despliegue de todos los servicios
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:17-alpine
+    container_name: aquaia_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aquaia}
+      POSTGRES_USER: ${POSTGRES_USER:-aquaia_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aquaia_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aquaia_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aquaia_network
+
+  # Ollama - Modelo LLM para recomendaciones
+  ollama:
+    image: ollama/ollama:latest
+    container_name: aquaia_ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - aquaia_network
+
+  # Open WebUI para gestión de Ollama (opcional)
+  webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: aquaia_webui
+    restart: unless-stopped
+    ports:
+      - "${WEBUI_PORT:-3333}:8080"
+    volumes:
+      - webui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - aquaia_network
+
+  # Redis para caché
+  redis:
+    image: redis:alpine
+    container_name: aquaia_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aquaia_network
+
+  # API Backend
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: aquaia_api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      # Información de la aplicación
+      APP_NAME: ${APP_NAME:-AquaAI - API de Predicción de Embalses}
+      APP_VERSION: ${APP_VERSION:-1.0.0}
+      
+      # Configuración del servidor
+      HOST: 0.0.0.0
+      PORT: 8000
+      DEBUG: ${DEBUG:-False}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      
+      # Base de datos
+      DB_USER: ${DB_USER:-admin_aquaia}
+      DB_PASSWORD: ${DB_PASSWORD:-${POSTGRES_PASSWORD}}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-aquaia}
+      DB_POOL_MIN: ${DB_POOL_MIN:-2}
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+      DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-30}
+      
+      # Ollama
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-phi3.5:latest}
+      ENABLE_LLM_RECOMENDACIONES: ${ENABLE_LLM_RECOMENDACIONES:-True}
+      OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-60}
+      OLLAMA_MAX_RETRIES: ${OLLAMA_MAX_RETRIES:-3}
+      OLLAMA_TEMPERATURE: ${OLLAMA_TEMPERATURE:-0.7}
+      OLLAMA_TOP_P: ${OLLAMA_TOP_P:-0.9}
+      LLM_CACHE_TTL: ${LLM_CACHE_TTL:-86400}
+      LLM_CACHE_ENABLED: ${LLM_CACHE_ENABLED:-True}
+      
+      # Redis
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      ENABLE_CACHE: ${ENABLE_CACHE:-True}
+      CACHE_TTL: ${CACHE_TTL:-3600}
+      CACHE_MAX_SIZE: ${CACHE_MAX_SIZE:-1000}
+      
+      # CORS
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://localhost:80,http://localhost:3000}
+      CORS_ALLOW_CREDENTIALS: ${CORS_ALLOW_CREDENTIALS:-True}
+      
+      # Seguridad
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production-min-32-chars}
+      API_KEYS: ${API_KEYS:-}
+      
+      # Rate Limiting
+      ENABLE_RATE_LIMIT: ${ENABLE_RATE_LIMIT:-True}
+      RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS:-1000}
+      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-60}
+      
+      # Modelo
+      MODEL_PATH: ${MODEL_PATH:-resources/Training_Aemet/modelo_embalses_aemet.pth}
+      SCALERS_PATH: ${SCALERS_PATH:-resources/Training_Aemet/artifacts/scalers.npy}
+      METRICS_PATH: ${METRICS_PATH:-resources/Training_Aemet/artifacts/metrics.json}
+      MODEL_LOOKBACK: ${MODEL_LOOKBACK:-90}
+      MODEL_HORIZON: ${MODEL_HORIZON:-180}
+      MODEL_HIDDEN_SIZE: ${MODEL_HIDDEN_SIZE:-128}
+      MODEL_NUM_LAYERS: ${MODEL_NUM_LAYERS:-2}
+      MODEL_DROPOUT: ${MODEL_DROPOUT:-0.2}
+      MODEL_FEATURES: ${MODEL_FEATURES:-22}
+      MODEL_SIGMA_FORECAST: ${MODEL_SIGMA_FORECAST:-0.05}
+      
+      # Predicción
+      DEFAULT_PREDICTION_HORIZON: ${DEFAULT_PREDICTION_HORIZON:-90}
+      DEFAULT_RISK_MIN_THRESHOLD: ${DEFAULT_RISK_MIN_THRESHOLD:-300.0}
+      DEFAULT_RISK_MAX_THRESHOLD: ${DEFAULT_RISK_MAX_THRESHOLD:-350.0}
+      
+      # AEMET
+      AEMET_API_KEY: ${AEMET_API_KEY:-}
+      
+    volumes:
+      - ./api/informes_generados:/app/api/informes_generados
+      - ./api/resources:/app/api/resources:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+    networks:
+      - aquaia_network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+    container_name: aquaia_frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+    networks:
+      - aquaia_network
+
+volumes:
+  postgres_data:
+    name: aquaia_postgres_data
+  ollama_data:
+    name: aquaia_ollama_data
+  webui_data:
+    name: aquaia_webui_data
+  redis_data:
+    name: aquaia_redis_data
+
+networks:
+  aquaia_network:
+    name: aquaia_network
+    driver: bridge

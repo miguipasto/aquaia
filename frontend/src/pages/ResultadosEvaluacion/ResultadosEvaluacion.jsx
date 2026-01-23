@@ -16,7 +16,7 @@ const ResultadosEvaluacion = () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await api.get('/evaluaciones/estadisticas')
+      const response = await api.get('/api/evaluaciones/estadisticas')
       setEstadisticas(response.data)
     } catch (err) {
       setError('Error cargando estadísticas')

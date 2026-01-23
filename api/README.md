@@ -55,30 +55,30 @@ Documentación API: http://localhost:8000/docs
 ## Endpoints Principales
 
 ### Core
-- `GET /health` - Estado del sistema (modelo, BD, LLM)
-- `GET /embalses` - Lista de embalses disponibles
-- `GET /embalses/{codigo}/historico` - Histórico de datos
+- `GET /api/health` - Estado del sistema (modelo, BD, LLM)
+- `GET /api/embalses` - Lista de embalses disponibles
+- `GET /api/embalses/{codigo}/historico` - Histórico de datos
 
 ### Predicciones
-- `POST /predicciones/{codigo}` - Predicciones LSTM (horizonte configurable)
-- `GET /predicciones/{codigo}/estado` - Estado actual del embalse
+- `POST /api/predicciones/{codigo}` - Predicciones LSTM (horizonte configurable)
+- `GET /api/predicciones/{codigo}/estado` - Estado actual del embalse
 
 ### Recomendaciones
-- `GET /recomendaciones/{codigo}` - Recomendación operativa (con caché)
-- `POST /recomendaciones/{codigo}` - Forzar nueva recomendación
+- `GET /api/recomendaciones/{codigo}` - Recomendación operativa (con caché)
+- `POST /api/recomendaciones/{codigo}` - Forzar nueva recomendación
 
 ### Informes
-- `POST /informes/{codigo}/generar` - Generar informe (diario/semanal)
-- `GET /informes/{codigo}/listar` - Listar informes generados
-- `GET /informes/{codigo}/descargar/{informe_id}` - Descargar informe HTML
+- `POST /api/informes/{codigo}/generar` - Generar informe (diario/semanal)
+- `GET /api/informes/{codigo}/listar` - Listar informes generados
+- `GET /api/informes/{codigo}/descargar/{informe_id}` - Descargar informe HTML
 
 ### Dashboard
-- `GET /dashboard/kpis` - KPIs agregados del sistema
-- `GET /dashboard/alertas` - Alertas activas
+- `GET /api/dashboard/kpis` - KPIs agregados del sistema
+- `GET /api/dashboard/alertas` - Alertas activas
 
 ### Evaluación
-- `POST /evaluaciones/precision` - Evaluar precisión del modelo
-- `POST /evaluaciones/comparar` - Comparar configuraciones
+- `POST /api/evaluaciones/precision` - Evaluar precisión del modelo
+- `POST /api/evaluaciones/comparar` - Comparar configuraciones
 
 ## Estructura de Servicios
 
