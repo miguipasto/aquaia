@@ -143,7 +143,7 @@ const GenerarInformeButton = ({
         try {
           // Llamar al endpoint de predicciones con formato correcto
           const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-          const response = await fetch(`${baseUrl}/predicciones/${embalseData.codigo_saih || embalseData.id}`, {
+          const response = await fetch(`${baseUrl}/api/predicciones/${embalseData.codigo_saih || embalseData.id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

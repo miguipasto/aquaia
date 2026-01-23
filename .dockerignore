@@ -1,0 +1,60 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Environment files
+*.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+*.md
+!README.md
+
+# Docker
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+.dockerignore
+
+# Testing
+validation/
+old/
+latex/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Node
+**/node_modules/
+**/dist/
+**/build/
+
+# Build artifacts
+**/.vite/
+**/.lighthouseci/
+
+# Temporary files
+*.tmp
+*.temp
+clean_text.txt
+context.txt
+fix_db.py
+todo.txt

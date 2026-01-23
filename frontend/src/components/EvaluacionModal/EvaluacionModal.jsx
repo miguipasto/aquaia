@@ -28,7 +28,7 @@ const EvaluacionModal = ({ isOpen, onClose }) => {
   const cargarPreguntas = async () => {
     try {
       setLoading(true)
-      const response = await api.get(`/evaluaciones/preguntas/${perfil}`)
+      const response = await api.get(`/api/evaluaciones/preguntas/${perfil}`)
       setPreguntas(response.data.preguntas)
       // Inicializar respuestas
       const respuestasIniciales = {}
@@ -68,7 +68,7 @@ const EvaluacionModal = ({ isOpen, onClose }) => {
         return
       }
 
-      await api.post('/evaluaciones', {
+      await api.post('/api/evaluaciones', {
         nombre: formData.nombre || null,
         email: formData.email || null,
         organizacion: formData.organizacion || null,

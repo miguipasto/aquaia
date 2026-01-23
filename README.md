@@ -47,7 +47,32 @@ Cada componente tiene su propio README con instrucciones específicas:
 
 ## 🚀 Inicio Rápido
 
-### 1. Base de datos
+### 🐳 Con Docker
+
+```bash
+# 1. Configurar variables de entorno
+cp .env.example .env
+nano .env  # Cambiar POSTGRES_PASSWORD y SECRET_KEY
+
+# 2. Construir y levantar servicios
+docker compose build
+docker compose up -d
+
+# 3. Descargar modelo LLM
+docker compose exec ollama ollama pull phi3.5:latest
+
+# 4. Acceder
+Frontend: http://localhost
+API: http://localhost:8000/docs
+```
+
+**Ver [DOCKER_DEPLOY.md](DOCKER_DEPLOY.md) para la guía completa.**
+
+---
+
+### 💻 Instalación Manual (Desarrollo Local)
+
+#### 1. Base de datos
 
 ```bash
 cd data/database
@@ -55,7 +80,7 @@ cp .env.template .env  # Configurar credenciales
 docker-compose up -d
 ```
 
-### 2. API
+#### 2. API
 
 ```bash
 cd api
@@ -66,7 +91,7 @@ cp .env.template .env  # Configurar variables
 python run.py
 ```
 
-### 3. Frontend
+#### 3. Frontend
 
 ```bash
 cd frontend
@@ -75,7 +100,7 @@ cp .env.example .env  # Configurar API_URL
 npm run dev
 ```
 
-### 4. Ollama (Opcional)
+#### 4. Ollama (Opcional)
 
 ```bash
 # Instalar Ollama
@@ -88,7 +113,7 @@ ollama pull phi3.5:latest
 ollama serve
 ```
 
-Acceder a: **http://localhost:5173**
+Acceder a: **http://localhost:3000**
 
 ## ⚙️ Variables de Configuración Importantes
 
