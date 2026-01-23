@@ -122,12 +122,12 @@ async def root():
         "version": settings.app_version,
         "descripcion": settings.app_description,
         "docs": "/docs",
-        "health": "/health"
+        "health": "/api/health"
     }
 
 
 @app.get(
-    "/health",
+    "/api/health",
     response_model=HealthCheck,
     tags=["Utilidades"],
     summary="Estado de salud de la API",
@@ -157,7 +157,7 @@ async def health_check():
 
 
 @app.get(
-    "/metrics",
+    "/api/metrics",
     tags=["Utilidades"],
     summary="Métricas del sistema",
     description="Devuelve métricas de rendimiento y uso del sistema"
@@ -190,7 +190,7 @@ async def clear_cache_endpoint():
 
 
 @app.get(
-    "/embalses",
+    "/api/embalses",
     response_model=List[EmbalseInfo],
     tags=["Embalses"],
     summary="Listar embalses disponibles",
@@ -209,7 +209,7 @@ async def listar_embalses(
 
 
 @app.get(
-    "/embalses/{codigo_saih}/historico",
+    "/api/embalses/{codigo_saih}/historico",
     response_model=List[SerieHistoricaPunto],
     tags=["Embalses"],
     summary="Obtener serie histórica de un embalse",
@@ -250,7 +250,7 @@ async def obtener_historico(
 
 
 @app.get(
-    "/embalses/{codigo_saih}/resumen",
+    "/api/embalses/{codigo_saih}/resumen",
     response_model=EmbalseResumen,
     tags=["Embalses"],
     summary="Obtener resumen estadístico del embalse",
@@ -303,7 +303,7 @@ async def generar_recomendacion_background(codigo_saih: str, fecha_inicio: str, 
 # ============================================================================
 
 @app.post(
-    "/predicciones/{codigo_saih}",
+    "/api/predicciones/{codigo_saih}",
     response_model=PrediccionResponse,
     tags=["Predicción"],
     summary="Generar predicción para un embalse",
@@ -367,7 +367,7 @@ async def generar_prediccion(
 
 
 @app.get(
-    "/predicciones/{codigo_saih}/ultimo",
+    "/api/predicciones/{codigo_saih}/ultimo",
     response_model=PrediccionResponse,
     tags=["Predicción"],
     summary="Predicción rápida con parámetros por defecto",
@@ -431,7 +431,7 @@ async def prediccion_ultimo(codigo_saih: str, background_tasks: BackgroundTasks)
 
 
 @app.post(
-    "/predicciones/lote",
+    "/api/predicciones/lote",
     response_model=List[PrediccionResponse],
     tags=["Predicción"],
     summary="Predicción en lote para múltiples embalses",
@@ -490,7 +490,7 @@ async def prediccion_lote(request: PrediccionLoteRequest):
 # ============================================================================
 
 @app.post(
-    "/embalses/{codigo_saih}/riesgo",
+    "/api/embalses/{codigo_saih}/riesgo",
     response_model=RiesgoEmbalse,
     tags=["Riesgo"],
     summary="Análisis de riesgo del embalse",
@@ -530,7 +530,7 @@ async def analizar_riesgo(
 
 
 @app.get(
-    "/embalses/{codigo_saih}/recomendacion",
+    "/api/embalses/{codigo_saih}/recomendacion",
     response_model=RiesgoEmbalse,
     tags=["Riesgo"],
     summary="Recomendación rápida",
@@ -563,7 +563,7 @@ async def obtener_recomendacion(codigo_saih: str):
 # ============================================================================
 
 @app.get(
-    "/demarcaciones",
+    "/api/demarcaciones",
     response_model=List[Demarcacion],
     tags=["Geografía"],
     summary="Listar demarcaciones hidrográficas",
@@ -581,7 +581,7 @@ async def listar_demarcaciones():
 
 
 @app.get(
-    "/demarcaciones/{id_demarcacion}",
+    "/api/demarcaciones/{id_demarcacion}",
     response_model=Demarcacion,
     tags=["Geografía"],
     summary="Detalle de demarcación",
@@ -602,7 +602,7 @@ async def obtener_demarcacion(id_demarcacion: str):
 
 
 @app.get(
-    "/demarcaciones/{id_demarcacion}/embalses",
+    "/api/demarcaciones/{id_demarcacion}/embalses",
     response_model=List[dict],
     tags=["Geografía"],
     summary="Embalses de una demarcación",
@@ -619,7 +619,7 @@ async def listar_embalses_demarcacion(id_demarcacion: str):
 
 
 @app.get(
-    "/organismos",
+    "/api/organismos",
     response_model=List[OrganismoGestor],
     tags=["Geografía"],
     summary="Listar organismos gestores",
@@ -636,7 +636,7 @@ async def listar_organismos():
 
 
 @app.get(
-    "/geografia/comunidades",
+    "/api/geografia/comunidades",
     response_model=List[Geografia],
     tags=["Geografía"],
     summary="Listar comunidades autónomas",
@@ -653,7 +653,7 @@ async def listar_comunidades():
 
 
 @app.get(
-    "/geografia/provincias",
+    "/api/geografia/provincias",
     response_model=List[Geografia],
     tags=["Geografía"],
     summary="Listar provincias",
@@ -676,7 +676,7 @@ async def listar_provincias(
 # ============================================================================
 
 @app.get(
-    "/estadisticas/ccaa/{id_ccaa}",
+    "/api/estadisticas/ccaa/{id_ccaa}",
     response_model=EstadisticasRegion,
     tags=["Estadísticas"],
     summary="Estadísticas por comunidad autónoma",
@@ -697,7 +697,7 @@ async def estadisticas_ccaa(id_ccaa: int):
 
 
 @app.get(
-    "/estadisticas/provincia/{id_provincia}",
+    "/api/estadisticas/provincia/{id_provincia}",
     response_model=EstadisticasRegion,
     tags=["Estadísticas"],
     summary="Estadísticas por provincia",
@@ -718,7 +718,7 @@ async def estadisticas_provincia(id_provincia: int):
 
 
 @app.get(
-    "/estadisticas/demarcacion/{id_demarcacion}",
+    "/api/estadisticas/demarcacion/{id_demarcacion}",
     response_model=EstadisticasRegion,
     tags=["Estadísticas"],
     summary="Estadísticas por demarcación",
@@ -739,7 +739,7 @@ async def estadisticas_demarcacion(id_demarcacion: str):
 
 
 @app.post(
-    "/comparar",
+    "/api/comparar",
     response_model=ComparacionResponse,
     tags=["Estadísticas"],
     summary="Comparar embalses",

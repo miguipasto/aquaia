@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 # Crear router
 router = APIRouter(
-    prefix="/recomendaciones",
+    prefix="/api/recomendaciones",
     tags=["Recomendaciones Operativas"],
     responses={
         404: {"description": "Recurso no encontrado"},

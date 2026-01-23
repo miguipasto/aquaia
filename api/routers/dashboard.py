@@ -16,7 +16,7 @@ from ..services.recomendacion import recomendacion_service
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/dashboard",
+    prefix="/api/dashboard",
     tags=["Dashboard"],
     responses={
         404: {"description": "Recurso no encontrado"},
@@ -210,9 +210,9 @@ async def obtener_datos_actuales_embalse(
                     detail=f"No hay datos disponibles para la fecha {fecha_referencia}"
                 )
             nivel_actual = float(historico.iloc[0]['nivel'])
-            precipitacion_actual = float(historico.iloc[0].get('precipitacion', 0)) if 'precipitacion' in historico.columns else None
-            temperatura_actual = float(historico.iloc[0].get('temperatura', 0)) if 'temperatura' in historico.columns else None
-            caudal_actual = float(historico.iloc[0].get('caudal_promedio', 0)) if 'caudal_promedio' in historico.columns else None
+            precipitacion_actual = float(historico.iloc[0].get('precipitacion') or 0) if 'precipitacion' in historico.columns else None
+            temperatura_actual = float(historico.iloc[0].get('temperatura') or 0) if 'temperatura' in historico.columns else None
+            caudal_actual = float(historico.iloc[0].get('caudal_promedio') or 0) if 'caudal_promedio' in historico.columns else None
             fecha_actual = fecha_ref.strftime('%Y-%m-%d')
         else:
             # Usar último nivel disponible

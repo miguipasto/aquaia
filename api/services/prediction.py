@@ -126,7 +126,7 @@ class PredictionService:
             if c not in df_hist.columns:
                 df_hist[c] = 0.0
             else:
-                df_hist[c] = df_hist[c].fillna(0.0)
+                df_hist[c] = df_hist[c].fillna(0.0).astype(float)
         
         # Normalizar datos históricos
         hist_vals = scaler.transform(df_hist[self.hist_cols])  # (lookback, n_feat)
@@ -146,7 +146,7 @@ class PredictionService:
                     if c not in df_fut.columns:
                         df_fut[c] = 0.0
                     else:
-                        df_fut[c] = df_fut[c].fillna(0.0)
+                        df_fut[c] = df_fut[c].fillna(0.0).astype(float)
                 
                 # Normalizar datos futuros
                 fut_vals = scaler.transform(df_fut[self.hist_cols])

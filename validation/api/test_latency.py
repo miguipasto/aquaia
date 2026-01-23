@@ -113,7 +113,7 @@ def test_all_endpoints():
         },
         {
             "name": "Predicción 7 días",
-            "url": f"{API_BASE_URL}/predicciones/E001",
+            "url": f"{API_BASE_URL}/api/predicciones/E001",
             "method": "POST",
             "data": {"fecha_inicio": "2024-06-01", "horizonte_dias": 7}
         },
@@ -131,17 +131,17 @@ def test_all_endpoints():
         },
         {
             "name": "Dashboard KPIs",
-            "url": f"{API_BASE_URL}/dashboard/kpis",
+            "url": f"{API_BASE_URL}/api/dashboard/kpis",
             "method": "GET"
         },
         {
             "name": "Recomendación GET",
-            "url": f"{API_BASE_URL}/recomendaciones/E001",
+            "url": f"{API_BASE_URL}/api/recomendaciones/E001",
             "method": "GET"
         },
         {
             "name": "Recomendación POST",
-            "url": f"{API_BASE_URL}/recomendaciones/E001",
+            "url": f"{API_BASE_URL}/api/recomendaciones/E001",
             "method": "POST",
             "data": {"fecha_inicio": "2024-06-01", "horizonte_dias": 7}
         }
