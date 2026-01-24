@@ -55,7 +55,7 @@ export const getHistorico = async (codigoSaih, startDate = null, endDate = null)
   if (startDate) params.start_date = startDate
   if (endDate) params.end_date = endDate
   
-  const response = await api.get(`/embalses/${codigoSaih}/historico`, { params })
+  const response = await api.get(`/api/embalses/${codigoSaih}/historico`, { params })
   return response.data
 }
 
@@ -89,7 +89,7 @@ export const getRecomendacion = async (codigoSaih, fechaInicio = null, horizonte
  * @param {string} codigoSaih - Código del embalse
  */
 export const getResumenEmbalse = async (codigoSaih) => {
-  const response = await api.get(`/embalses/${codigoSaih}/resumen`)
+  const response = await api.get(`/api/embalses/${codigoSaih}/resumen`)
   return response.data
 }
 
@@ -97,7 +97,7 @@ export const getResumenEmbalse = async (codigoSaih) => {
  * Obtiene demarcaciones hidrográficas
  */
 export const getDemarcaciones = async () => {
-  const response = await api.get('/demarcaciones')
+  const response = await api.get('/api/demarcaciones')
   return response.data
 }
 
