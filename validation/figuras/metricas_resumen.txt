@@ -1,0 +1,18 @@
+% Tabla resumen de métricas por horizonte
+\begin{table}[h]
+\centering
+\caption{Resumen de métricas de validación por horizonte temporal}
+\label{tab:metricas_horizonte}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Horizonte} & \textbf{MAE (hm$^3$)} & \textbf{RMSE (hm$^3$)} & \textbf{$R^2$} & \textbf{Error Rel (\%)} \\
+\midrule
+7 días & 0.56 $\pm$ 0.12 & 0.59 $\pm$ 0.14 & 0.916 & 0.09 \\
+30 días & 1.48 $\pm$ 0.20 & 1.96 $\pm$ 0.13 & 0.170 & 0.24 \\
+90 días & 1.64 $\pm$ 0.23 & 2.08 $\pm$ 0.27 & 0.317 & 0.26 \\
+180 días & 3.26 $\pm$ 1.21 & 4.16 $\pm$ 1.74 & -0.672 & 0.50 \\
+\midrule
+\textbf{Promedio} & 1.73 & 2.20 & 0.183 & 0.27 \\
+\bottomrule
+\end{tabular}
+\end{table}
