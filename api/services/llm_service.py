@@ -8,6 +8,7 @@ import hashlib
 import logging
 from typing import Dict, Optional, Tuple, List
 from datetime import datetime, timedelta
+from pathlib import Path
 import httpx
 
 from ..config import settings
@@ -30,6 +31,11 @@ class LLMService:
             'llm_errors': 0,
             'llm_success': 0
         }
+        
+        # Directorio para guardar logs de interacciones con LLM
+        self.logs_dir = Path(__file__).parent.parent / "llm_logs"
+        self.logs_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"LLM logs directory: {self.logs_dir}")
     
     def _generar_cache_key(
         self, 
@@ -42,6 +48,44 @@ class LLMService:
         # Incluir embalse y fecha si están disponibles para mejor granularidad
         content = f"{nivel_riesgo}:{codigo_embalse or 'generic'}:{fecha or 'any'}:{prompt[:200]}"
         return hashlib.sha256(content.encode()).hexdigest()
+    
+    def _guardar_interaccion_llm(
+        self,
+        tipo_prompt: str,
+        prompt: str,
+        respuesta: Dict,
+        metadata: Optional[Dict] = None
+    ) -> None:
+        """
+        Guarda la solicitud y respuesta del LLM en un archivo para análisis.
+        
+        Args:
+            tipo_prompt: Tipo de prompt ('recomendacion', 'informe_diario', 'informe_semanal')
+            prompt: Texto del prompt enviado
+            respuesta: Respuesta del LLM (diccionario)
+            metadata: Información adicional (embalse, fecha, etc.)
+        """
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"{tipo_prompt}_{timestamp}.json"
+            filepath = self.logs_dir / filename
+            
+            log_data = {
+                "timestamp": datetime.now().isoformat(),
+                "tipo_prompt": tipo_prompt,
+                "metadata": metadata or {},
+                "prompt": prompt,
+                "respuesta": respuesta,
+                "modelo": settings.ollama_model,
+                "temperatura": settings.ollama_temperature
+            }
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(log_data, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Interacción LLM guardada: {filename}")
+        except Exception as e:
+            logger.error(f"Error guardando interacción LLM: {e}")
     
     async def _obtener_de_cache_db(self, cache_key: str) -> Optional[Tuple[str, str]]:
         """
@@ -344,6 +388,22 @@ Formato de respuesta:
         try:
             motivo, accion = await self._llamar_ollama_async(prompt)
             
+            # 4.1. Guardar interacción en archivo para análisis
+            self._guardar_interaccion_llm(
+                tipo_prompt="recomendacion",
+                prompt=prompt,
+                respuesta={"motivo": motivo, "accion": accion},
+                metadata={
+                    "codigo_embalse": codigo_embalse,
+                    "nivel_riesgo": nivel_riesgo,
+                    "fecha_referencia": fecha_referencia,
+                    "horizonte": horizonte,
+                    "porcentaje": porcentaje,
+                    "nivel_actual": metricas.get('nivel_actual'),
+                    "nivel_medio": metricas.get('nivel_medio')
+                }
+            )
+            
             # 5. Guardar en caché de forma asíncrona (no bloqueante)
             asyncio.create_task(
                 self._guardar_en_cache_db(cache_key, prompt, nivel_riesgo, motivo, accion)
@@ -405,7 +465,7 @@ Responde en Formato JSON:
                 if response.status_code == 200:
                     res_json = json.loads(response.json().get('response', '{}'))
                     
-                    return {
+                    resultado = {
                         "resumen_ejecutivo": res_json.get('resumen', 'Situación estable.'),
                         "analisis_situacion": res_json.get('situacion', 'Niveles dentro de la normalidad.'),
                         "prediccion_48h": f"Tendencia hacia {prediccion.get('nivel_30d', 0):.2f} msnm.",
@@ -413,6 +473,21 @@ Responde en Formato JSON:
                         "evaluacion_riesgos": riesgos.get('mensaje', "Monitorización continua."),
                         "llm_usado": True
                     }
+                    
+                    # Guardar interacción en archivo
+                    self._guardar_interaccion_llm(
+                        tipo_prompt="informe_diario",
+                        prompt=prompt_base,
+                        respuesta=resultado,
+                        metadata={
+                            "nombre_embalse": datos_actual.get('nombre_embalse'),
+                            "nivel_actual": datos_actual.get('nivel_actual_msnm'),
+                            "porcentaje_capacidad": datos_actual.get('porcentaje_capacidad'),
+                            "nivel_30d": prediccion.get('nivel_30d')
+                        }
+                    )
+                    
+                    return resultado
             raise Exception("Fallo en respuesta de Ollama")
             
         except Exception as e:
@@ -490,7 +565,7 @@ Formato JSON:
                 if response.status_code == 200:
                     res_json = json.loads(response.json().get('response', '{}'))
                     
-                    return {
+                    resultado = {
                         "resumen_ejecutivo": res_json.get('resumen', 'Análisis estratégico semanal disponible.'),
                         "evolucion_semanal": res_json.get('evolucion', 'Evolución estable en el periodo analizado.'),
                         "analisis_escenarios": res_json.get('escenarios', 'Los escenarios muestran una variabilidad dentro de rangos históricos.'),
@@ -498,6 +573,25 @@ Formato JSON:
                         "conclusiones_calidad": res_json.get('conclusiones', f"Validación técnica completada (R2: {metricas.get('R2_global', 0):.2f})."),
                         "llm_usado": True
                     }
+                    
+                    # Guardar interacción en archivo
+                    self._guardar_interaccion_llm(
+                        tipo_prompt="informe_semanal",
+                        prompt=prompt_base,
+                        respuesta=resultado,
+                        metadata={
+                            "nombre_embalse": datos_actual.get('nombre_embalse'),
+                            "nivel_actual": datos_actual.get('nivel_actual_msnm'),
+                            "porcentaje_capacidad": datos_actual.get('porcentaje_capacidad'),
+                            "nivel_30d": prediccion.get('nivel_30d'),
+                            "nivel_90d": prediccion.get('nivel_90d'),
+                            "nivel_180d": prediccion.get('nivel_180d'),
+                            "r2_score": metricas.get('R2_global'),
+                            "mae_global": metricas.get('MAE_global')
+                        }
+                    )
+                    
+                    return resultado
         except Exception as e:
             logger.warning(f"Error en LLM semanal avanzado: {e}")
             

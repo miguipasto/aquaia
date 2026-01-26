@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-01-26T20:21:28.407782",
+  "tipo_prompt": "recomendacion",
+  "metadata": {
+    "codigo_embalse": "E036",
+    "nivel_riesgo": "MODERADO",
+    "fecha_referencia": "2024-09-07",
+    "horizonte": 90,
+    "porcentaje": 89.78455338191827,
+    "nivel_actual": 825.96,
+    "nivel_medio": 821.5286634445522
+  },
+  "prompt": "Eres un ingeniero hidráulico experto del Sistema Automático de Información Hidrológica (SAIH). \nTu tarea es analizar datos de embalse y generar recomendaciones operativas profesionales.\n\nSITUACIÓN DE VIGILANCIA - NIVELES ELEVADOS\n\nDATOS DEL EMBALSE:\n• Ubicación: Salas - Presa\n• Demarcación: Miño-Sil (Parte española)\n• Nivel Actual: 825.96 hm³\n• Capacidad Máxima: 915.00 hm³\n• Porcentaje de Llenado: 89.8%\n\nPREDICCIÓN (90 días):\n• Nivel Esperado: 821.53 hm³\n• Rango: 821.24 - 821.91 hm³\n• Tendencia: Nivel estable\n• Incertidumbre (MAE): ±0.00 hm³\n• Nivel de Riesgo: MODERADO\n\nTAREA:\nGenera un análisis técnico en formato JSON con dos campos:\n\n1. \"motivo\": Explicación profesional del nivel de riesgo en 2-3 frases máximo.\n   - Sin emojis ni símbolos decorativos\n   - Menciona datos cuantitativos clave\n   - Explica el contexto hidrológico\n   - Indica tendencia si es relevante\n\n2. \"accion\": Lista estructurada de acciones operativas en formato HTML.\n   - Usa una lista no ordenada con <ul> y <li>\n   - Sin emojis ni símbolos decorativos\n   - 3-5 items máximo, ordenados por prioridad\n   - Especifica valores numéricos cuando sea posible\n   - Incluye coordinación con organismos si es crítico\n   - Formato ejemplo:\n     \"<ul><li>Monitorear niveles cada hora</li><li>Coordinar con autoridades locales</li><li>Preparar protocolo de emergencia</li></ul>\"\n\nREGLAS IMPORTANTES:\n- NO uses emojis, emoticones ni símbolos decorativos (🔴 ⚠️ ✅ etc)\n- Responde ÚNICAMENTE con JSON válido, sin texto adicional antes o después\n- El campo \"accion\" debe contener HTML con etiquetas <ul> y <li>\n- Usa lenguaje técnico pero comprensible\n- Sé conciso y directo\n- Prioriza acciones de mayor a menor importancia\n\nFORMATO DE RESPUESTA (copiar exactamente esta estructura):\n{\n  \"motivo\": \"Texto del motivo aquí\",\n  \"accion\": \"<ul><li>Primera acción</li><li>Segunda acción</li><li>Tercera acción</li></ul>\"\n}\n```\n- Prioriza la seguridad hidrológica\n\nFormato de respuesta:\n{\"motivo\": \"texto aquí\", \"accion\": \"texto aquí\"}",
+  "respuesta": {
+    "motivo": "El nivel del embalse en Salas está actualmente al 89.8% con una predicción estable para los próximos 90 días, lo que indica un riesgo moderado debido a la proximidad de su capacidad máxima (915 hm³). El ligero descenso esperado y el bajo margen de error sugieren control estricto pero no inmediato peligro. La coordinación continuada con organismos locales es crucial para gestionar posibles desarrollos.",
+    "accion": "<ul><li>Monitoreo constante del nivel embalsado cada hora</li><li>Comunicación regular y actualización de datos con las autoridades hidrológicas locales e interdepartamentales</li><li>Preparación y revisión exhaustiva del protocolo operativo en caso necesario, incluyendo medidas para una posible desbordamiento gradual o repentino.</li></ul>"
+  },
+  "modelo": "phi3.5:latest",
+  "temperatura": 0.7
+}

@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-01-26T20:24:03.120275",
+  "tipo_prompt": "informe_semanal",
+  "metadata": {
+    "nombre_embalse": null,
+    "nivel_actual": 825.99,
+    "porcentaje_capacidad": 90.27,
+    "nivel_30d": 823.1102334713936,
+    "nivel_90d": 822.7796865081787,
+    "nivel_180d": 823.1095967888832,
+    "r2_score": 0.92,
+    "mae_global": null
+  },
+  "prompt": "Eres el Director de Recursos Hídricos. Analiza el informe semanal del embalse seleccionado.\n\nCONTEXTO SEMANAL:\n- Nivel Actual: 825.99 msnm (90.3% llenado)\n- Evolución 7 días: 7 puntos de datos registrados.\n\nPROYECCIONES:\n- 30 días: 823.11 msnm\n- 90 días: 822.78 msnm\n- 180 días: 823.11 msnm\n\nESCENARIOS (180 días):\n- Pesimista: 0.00 msnm\n- Optimista: 0.00 msnm\n\nCALIDAD MODELO:\n- MAE Global: 0.0000\n- R2 Score: 0.9200\n\nTAREA:\nGenera un informe estratégico JSON con:\n1. resumen: Visión general estratégica.\n2. evolucion: Análisis de la tendencia de la última semana.\n3. escenarios: Evaluación técnica de los escenarios a largo plazo.\n4. recomendaciones: Acciones estratégicas (formato HTML <ul><li>).\n5. conclusiones: Trazabilidad y calidad de datos.\n\nFormato JSON:\n{\n  \"resumen\": \"...\",\n  \"evolucion\": \"...\",\n  \"escenarios\": \"...\",\n  \"recomendaciones\": \"<ul><li>...</li></ul>\",\n  \"conclusiones\": \"...\"\n}\n",
+  "respuesta": {
+    "resumen_ejecutivo": "El embalse actualmente se encuentra en un nivel cercano al llenado completo, con una cobertura del 90.3%, manteniéndose estable a lo largo de las últimas siete semanas según los registros disponibles. Las proyecciones futuras para el próximo mes hasta finalizar septiembre sugieren un ligero descenso en la altura del embalse, alcanzando una cobertura ligeramente menor al 90% a mediados de año antes de estabilizarse aproximadamente en los niveles actuales. La calidad modelada es alta con indicadores precisos para evaluar el comportamiento futuro.",
+    "evolucion_semanal": "En la última semana, se han registrado cuatro puntos datos mostrando una ligera disminución del nivel del embalse en promedio de aproximadamente un punto métrico por día. A pesar de este descenso gradual, el nivel actual sigue siendo alto y cercano al llenamiento completo (90.3%). Esta tendencia ha estado relativamente constante a lo largo de las siete últimas semanas.",
+    "analisis_escenarios": "Para los próximos tres meses se presentan dos posibles escenarios basados en nuestra proyección del modelo: una situación pesimista donde el embalse disminuye hasta alcanzar un nivel muy bajo, y otra situación óptimista con no cambios significativos. Sin embargo, dado que ambos escenarios proyectan niveles cercanos a cero sobre la altura actual del agua (0.0 msnm), indica una estabilización en los próximos 180 días sin variaciones sustanciales.",
+    "recomendaciones_estrategicas": "<ul><li>Monitorear continuamente el nivel y las entradas/salidas para detectar cualquier cambio inesperado rápidamente.</li><li>Verificar la precisión del modelo con datos adicionales como precipitaciones, uso de agua e infraestructura embalsable a medida que vaya surgiendo información disponible.</li><li>Prepararse para ambos escenarios presentando planes operativos específicos y estratégicos dependiendo en función del nivel realizado al finalizar el semestre, garantizando una gestión eficiente de recursos hídricos durante las variaciones proyectadas.</li><li>Comunicar con partes interesadas relevantes para mantener transparencia y coordinar la planificación a largo plazo según lo dictado por los escenarios del modelo estadístico.</li></ul>",
+    "conclusiones_calidad": "Los datos son de alta calidad, como evidenciado en el MAE Global cercano cero y un alto R2 Score. Esto indica una fuerte precisión predicción por parte del modelo utilizado para proyecciones futuras. Sin embargo, es crucial continuar con la monitorización regular de datos debido a las variaciones naturales en los niveles embalsados que pueden surgir y afectar al manejo estratégico de recursos hídricos.",
+    "llm_usado": true
+  },
+  "modelo": "phi3.5:latest",
+  "temperatura": 0.7
+}

@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-01-26T20:24:47.387978",
+  "tipo_prompt": "informe_diario",
+  "metadata": {
+    "nombre_embalse": null,
+    "nivel_actual": 825.99,
+    "porcentaje_capacidad": 90.27,
+    "nivel_30d": 823.0799808084964
+  },
+  "prompt": "Como ingeniero hidrológico jefe, analiza la situación operacional del embalse seleccionado.\n\nESTADO ACTUAL:\n- Nivel: 825.99 msnm\n- Llenado: 90.3%\n- Capacidad Total: 0.00 hm³\n\nPREDICCIÓN CORTO PLAZO (48h - 30d):\n- Tendencia esperada: 823.08 msnm a 30 días.\n- Riesgos detectados: Sin riesgos significativos.\n\nTAREA:\nGenera un análisis técnico dividido en:\n1. Resumen Ejecutivo (conciso, profesional)\n2. Análisis de Situación (detalles técnicos, comparativa)\n3. Recomendaciones Operativas (formato HTML <ul><li>)\n\nResponde en Formato JSON:\n{\n  \"resumen\": \"...\",\n  \"situacion\": \"...\",\n  \"recomendaciones\": \"<ul><li>...</li></ul>\"\n}\n",
+  "respuesta": {
+    "resumen_ejecutivo": "El embalse actualmente está al nivel de llantas con un llenado del 90.3%, indicando una situación bien mantenida. La previsión corta a los próximos 30 días sugiere una ligera disminución en el nivel, esperándose que alcance aproximadamente 823.08 msnm. No se han identificado riesgos significativos hasta la fecha actual.",
+    "analisis_situacion": "El embalse está cerca de su capacidad total con un llenado del 90.3%, manteniendo una altitud constante en torno a los 825.99 msnm desde el último informe. La tendencia proyectada para las próximas cuatro semanas es una disminución gradual, aunque estándar dentro de la variabilidad normal del ciclo hidrológico esperado sin riesgos inmediatos a considerar según los datos disponibles actualmente.",
+    "prediccion_48h": "Tendencia hacia 823.08 msnm.",
+    "recomendaciones_html": "<ul><li>Realizar un monitoreo regular: Continúe el seguimiento preciso y frecuente de la altitud del embalse, llenamiento e indicadores hidrológicos para identificar rápidamente cualquier cambio significativo.</li><li>Prepararse ante una disminución proyectada en los niveles del agua: Desarrolle un plan operacional que aborde posibles escenarios de reducción temporal y su impacto potencial, incluidas medidas para garantizar el suministro hidrológico esencial.</li><li>Comunicarse con las partes interesadas relevantes: Mantenga una comunicación clara e informativa continua con los usuarios del embalse y agencias gubernamentales involucradas sobre su estado operacional, especialmente a medida que la tendencia proyectada se acerque.</li><li>Planificación para condiciones climáticas adversas: Como precaución por posibles variaciones extremas en las precipitaciones o temperatura futuras, revise los protocolos de gestión del riesgo y el planificador del embalse actualizado para respuestas rápidas.</li></ul>",
+    "evaluacion_riesgos": "Monitorización continua.",
+    "llm_usado": true
+  },
+  "modelo": "phi3.5:latest",
+  "temperatura": 0.7
+}
