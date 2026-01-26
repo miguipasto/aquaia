@@ -97,11 +97,36 @@ api/
 │   └── recomendaciones.py # Endpoints recomendaciones
 ├── middleware/
 │   ├── cache.py           # Sistema de caché
+├── middleware/
+│   ├── cache.py           # Sistema de caché
 │   ├── rate_limit.py      # Rate limiting
 │   └── security.py        # Headers seguridad
-└── templates/
-    ├── informe_diario_template.html
-    └── informe_semanal_template.html
+├── templates/
+│   ├── informe_diario_template.html
+│   └── informe_semanal_template.html
+└── llm_logs/               # Logs de interacciones con LLM
+    ├── README.md
+    ├── analizar_logs.py   # Script de análisis
+    └── *.json             # Logs automáticos
+```
+
+## Logs de LLM
+
+El sistema registra automáticamente todas las interacciones con el LLM en `llm_logs/`. Cada archivo contiene:
+- Prompt completo enviado al modelo
+- Respuesta estructurada recibida
+- Metadata (embalse, riesgo, fecha, etc.)
+- Configuración del modelo
+
+### Análisis de logs
+
+```bash
+# Analizar todos los logs
+cd llm_logs
+python analizar_logs.py
+
+# Ver ejemplo de interacción
+cat ejemplo_recomendacion.json | jq .
 ```
 
 ## Tecnologías

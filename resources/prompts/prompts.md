@@ -63,6 +63,42 @@ FORMATO DE RESPUESTA (copiar exactamente esta estructura):
 }
 ```
 
+**Ejemplos de respuestas esperadas según nivel de riesgo**:
+
+**RIESGO ALTO (Desbordamiento)**:
+```json
+{
+  "motivo": "El embalse alcanzará 315.8 hm³ (95.7% de capacidad) en los próximos 7 días, superando el umbral crítico de 313.5 hm³. La tendencia ascendente rápida con incertidumbre de ±2.3 hm³ indica alto riesgo de desbordamiento.",
+  "accion": "<ul><li>Incrementar desembalse a 45 m³/s de forma inmediata</li><li>Activar protocolo de emergencia nivel 2</li><li>Coordinar con Confederación Hidrográfica y Protección Civil</li><li>Monitorizar niveles cada hora</li><li>Comunicar alertas a municipios de cuenca baja</li></ul>"
+}
+```
+
+**RIESGO MODERADO (Vigilancia)**:
+```json
+{
+  "motivo": "Los niveles proyectados alcanzan 285.2 hm³ (86.4% de capacidad) en 7 días, acercándose al umbral de vigilancia. La tendencia ascendente moderada requiere seguimiento continuo para prevenir situaciones críticas.",
+  "accion": "<ul><li>Aumentar desembalse a 28 m³/s de forma progresiva</li><li>Monitorizar niveles cada 3 horas</li><li>Revisar predicciones meteorológicas diarias</li><li>Mantener comunicación con organismos de cuenca</li></ul>"
+}
+```
+
+**RIESGO BAJO (Normal)**:
+```json
+{
+  "motivo": "El embalse se mantiene en 198.5 hm³ (60.2% de capacidad) con tendencia estable. Los niveles están dentro del rango operativo óptimo sin indicadores de riesgo a corto plazo.",
+  "accion": "<ul><li>Mantener desembalse actual de 15 m³/s</li><li>Continuar monitorización estándar cada 6 horas</li><li>Revisión semanal de tendencias</li></ul>"
+}
+```
+
+**RIESGO SEQUÍA**:
+```json
+{
+  "motivo": "El nivel descenderá a 82.3 hm³ (24.9% de capacidad) en los próximos 7 días, por debajo del umbral mínimo operativo de 99.0 hm³. La tendencia de bajada rápida indica riesgo crítico de disponibilidad hídrica.",
+  "accion": "<ul><li>Reducir desembalse a 5 m³/s de forma inmediata</li><li>Implementar protocolo de sequía nivel 1</li><li>Activar plan de restricciones de consumo</li><li>Coordinar con ayuntamientos afectados</li><li>Evaluar fuentes alternativas de suministro</li></ul>"
+}
+```
+
+---
+
 ## 2. Prompt: Análisis para Informe Diario
 
 
